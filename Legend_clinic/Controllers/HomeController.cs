@@ -2,7 +2,7 @@
 
 namespace Legend_clinic.Controllers
 {
-    public class EmployeeController : Controller
+    public class HomeController : Controller
     {
         public IActionResult Index()
         {
