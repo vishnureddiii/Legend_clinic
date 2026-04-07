@@ -1,3 +1,6 @@
+using Legend_clinic.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace Legend_clinic
 {
     public class Program
@@ -10,6 +13,8 @@ namespace Legend_clinic
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
