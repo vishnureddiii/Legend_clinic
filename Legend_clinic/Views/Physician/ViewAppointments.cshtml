@@ -1,53 +1,44 @@
-﻿@model IEnumerable<Legend_clinic.Models.Appointment>
-
+﻿@model IEnumerable<Appointment>
 @{
     Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
     ViewData["Title"] = "Appointments";
 }
 
-<div class="card shadow p-4">
-    <h2 class="mb-4 text-primary">My Appointments</h2>
+<h3>My Appointments</h3>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-primary">
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var schedule = item.Schedules.FirstOrDefault();
+
             <tr>
-                <th>Patient</th>
-                <th>Date</th>
-                <th>Criticality</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Advice</th>
+                <td>@item.Patient?.Name</td>
+                <td>@item.AppointmentDateTime</td>
+                <td>@item.Reason</td>
+                <td>@item.ScheduleStatus</td>
+
+                <td>
+                    @if (schedule != null)
+                    {
+                        <a asp-action="GiveAdvice"
+                               asp-route-scheduleId="@schedule.ScheduleId"
+                               class="btn btn-primary btn-sm">
+                            Start Consultation
+                        </a>
+                    }
+                </td>
             </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var item in Model)
-            {
-                var schedule = item.Schedules.FirstOrDefault();
-
-                <tr>
-                    <td>@item.Patient?.Name</td>
-                    <td>@item.AppointmentDateTime.ToString("dd-MM-yyyy hh:mm tt")</td>
-                    <td>@item.Criticality</td>
-                    <td>@item.Reason</td>
-                    <td>@item.ScheduleStatus</td>
-
-                    <td>
-                        @if (schedule != null)
-                        {
-                            <a asp-action="GiveAdvice"
-                                   asp-route-scheduleId="@schedule.ScheduleId"
-                                   class="btn btn-primary btn-sm">
-                                Give Advice
-                            </a>
-                        }
-                        else
-                        {
-                            <span class="text-danger">No Schedule</span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>

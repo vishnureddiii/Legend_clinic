@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Legend_clinic.Models;
 
@@ -14,12 +13,10 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-       
         public IActionResult Register()
         {
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -36,7 +33,6 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                
                 var patient = new Patient
                 {
                     Name = model.Name,
@@ -51,7 +47,6 @@ namespace Legend_clinic.Controllers
                 _context.Patients.Add(patient);
                 await _context.SaveChangesAsync();
 
-
                 var user = new User
                 {
                     UserName = model.UserName,
@@ -64,7 +59,6 @@ namespace Legend_clinic.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                ViewBag.Success = "Registered successfully! Wait for admin approval.";
                 return RedirectToAction("Login");
             }
 
@@ -76,7 +70,6 @@ namespace Legend_clinic.Controllers
             return View();
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -84,17 +77,19 @@ namespace Legend_clinic.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u =>
+                        u.UserName == model.UserName &&
+                        u.Password == model.Password);
 
                 if (user != null)
                 {
-                    
                     if (!user.IsApproved)
                     {
                         ViewBag.Error = "Your account is waiting for admin approval.";
                         return View(model);
                     }
 
+                    // ================= SESSION FIX =================
                     HttpContext.Session.SetString("UserName", user.UserName);
                     HttpContext.Session.SetString("Role", user.Role);
                     HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
@@ -113,9 +108,9 @@ namespace Legend_clinic.Controllers
                 ViewBag.Error = "Invalid username or password!";
             }
 
-            return View(model); // ✅ IMPORTANT
+            return View(model);
         }
-        // GET: /Account/Logout
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
