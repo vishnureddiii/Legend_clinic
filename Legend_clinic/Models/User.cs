@@ -28,4 +28,6 @@ public partial class User
 
     [Column("ReferenceID")]
     public int ReferenceId { get; set; }
+    [Column("IsApproved")]
+    public bool IsApproved { get; set; }
 }

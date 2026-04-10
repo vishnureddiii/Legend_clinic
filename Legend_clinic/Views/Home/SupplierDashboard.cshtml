@@ -1,0 +1,8 @@
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    Layout = "_SupplierLayout";
+    ViewData["Title"] = "Supplier Dashboard";
+}
+
+<h2>Welcome, @Context.Session.GetString("UserName")!</h2>
+<p>Manage your supply orders and deliveries to chemists.</p>

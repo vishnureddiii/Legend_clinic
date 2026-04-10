@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewData["Title"] = "CreateUser";
+}
+
+
+
+@model Legend_clinic.Models.CreateUserViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create User";
+}
+
+<h2 class="mb-4">Create User</h2>
+
+<form asp-action="CreateUser" method="post">
+
+    <!-- Account Info -->
+    <h5 class="text-primary">Account Details</h5>
+
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Role" class="form-label"></label>
+        <select asp-for="Role" class="form-select">
+            <option value="">Select Role</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Chemist">Chemist</option>
+            <option value="Supplier">Supplier</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <!-- Profile Info -->
+    <h5 class="text-primary">Details</h5>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Specialization" class="form-label"></label>
+        <input asp-for="Specialization" class="form-control" />
+        <small class="text-muted">Only for Doctor</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Summary" class="form-label"></label>
+        <input asp-for="Summary" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">
+        Create User
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
