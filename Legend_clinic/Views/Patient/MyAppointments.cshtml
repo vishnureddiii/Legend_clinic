@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "MyAppointments";
+}
+
+@model List<Legend_clinic.Models.Appointment>
+
+<h2>My Appointments</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Physician.Name</td>
+                <td>@item.AppointmentDateTime</td>
+                <td>@item.Reason</td>
+                <td>
+                    <span class="badge
+                        @(item.ScheduleStatus == "Approved" ? "bg-success" :
+                                                    item.ScheduleStatus == "Rejected" ? "bg-danger" :
+                                                    "bg-warning")">
+                        @item.ScheduleStatus
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

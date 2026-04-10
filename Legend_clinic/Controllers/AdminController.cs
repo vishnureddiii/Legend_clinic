@@ -13,15 +13,13 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-        // ✅ Check if current session user is admin
+      
         private bool IsAdmin()
         {
             return HttpContext.Session.GetString("Role") == "Admin";
         }
 
-        // --------------------------
-        // CREATE USER
-        // --------------------------
+     
         public IActionResult CreateUser()
         {
             if (!IsAdmin())
@@ -40,7 +38,7 @@ namespace Legend_clinic.Controllers
             {
                 int referenceId = 0;
 
-                // 🔹 Doctor
+                
                 if (model.Role == "Doctor")
                 {
                     var doctor = new Physician
@@ -56,7 +54,7 @@ namespace Legend_clinic.Controllers
                     await _context.SaveChangesAsync();
                     referenceId = doctor.PhysicianId;
                 }
-                // 🔹 Chemist
+               
                 else if (model.Role == "Chemist")
                 {
                     var chemist = new Chemist
@@ -71,7 +69,7 @@ namespace Legend_clinic.Controllers
                     await _context.SaveChangesAsync();
                     referenceId = chemist.ChemistId;
                 }
-                // 🔹 Supplier
+                
                 else if (model.Role == "Supplier")
                 {
                     var supplier = new Supplier
@@ -86,7 +84,7 @@ namespace Legend_clinic.Controllers
                     referenceId = supplier.SupplierId;
                 }
 
-                // 🔹 Create User
+               
                 var user = new User
                 {
                     UserName = model.UserName,
@@ -105,9 +103,7 @@ namespace Legend_clinic.Controllers
             return View(model);
         }
 
-        // --------------------------
-        // PENDING PATIENTS
-        // --------------------------
+      
         public async Task<IActionResult> PendingPatients()
         {
             if (!IsAdmin())
@@ -150,9 +146,7 @@ namespace Legend_clinic.Controllers
             return RedirectToAction("PendingPatients");
         }
 
-        // --------------------------
-        // MANAGE PHYSICIANS
-        // --------------------------
+        
         public IActionResult ManagePhysicians()
         {
             if (!IsAdmin())
@@ -207,9 +201,7 @@ namespace Legend_clinic.Controllers
             return RedirectToAction("ManagePhysicians");
         }
 
-        // --------------------------
-        // MANAGE CHEMISTS
-        // --------------------------
+        
         public IActionResult ManageChemists()
         {
             if (!IsAdmin())
@@ -263,9 +255,7 @@ namespace Legend_clinic.Controllers
             return RedirectToAction("ManageChemists");
         }
 
-        // --------------------------
-        // MANAGE SUPPLIERS
-        // --------------------------
+        
         public IActionResult ManageSuppliers()
         {
             if (!IsAdmin())
@@ -318,5 +308,51 @@ namespace Legend_clinic.Controllers
 
             return RedirectToAction("ManageSuppliers");
         }
+        // 🔥 VIEW PENDING APPOINTMENTS
+        public async Task<IActionResult> PendingAppointments()
+        {
+            if (!IsAdmin())
+                return RedirectToAction("AccessDenied", "Home");
+
+            var list = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Physician)
+                .Where(a => a.ScheduleStatus == "Pending")
+                .ToListAsync();
+
+            return View(list);
+        }
+        public async Task<IActionResult> ApproveAppointment(int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("AccessDenied", "Home");
+
+            var appt = await _context.Appointments.FindAsync(id);
+
+            if (appt != null)
+            {
+                appt.ScheduleStatus = "Approved";
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("PendingAppointments");
+        }
+        public async Task<IActionResult> RejectAppointment(int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("AccessDenied", "Home");
+
+            var appt = await _context.Appointments.FindAsync(id);
+
+            if (appt != null)
+            {
+                appt.ScheduleStatus = "Rejected";
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("PendingAppointments");
+        }
     }
+
 }
+
