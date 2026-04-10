@@ -1,0 +1,7 @@
+﻿@{
+    Layout = "_DoctorLayout";
+    ViewData["Title"] = "Doctor Dashboard";
+}
+
+<h2>Welcome, Dr. @Context.Session.GetString("UserName")!</h2>
+<p>View your appointments, patient history, and provide prescriptions.</p>
