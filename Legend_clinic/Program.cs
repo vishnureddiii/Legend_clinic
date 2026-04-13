@@ -1,16 +1,16 @@
-using Legend_clinic.Models;
+﻿using Legend_clinic.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Add services
 builder.Services.AddControllersWithViews();
 
 // Configure DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Optional: Add session support for login/auth
+// Add Session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -20,26 +20,24 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-// Use session before authorization
-app.UseSession();
+app.UseRouting();
+
+app.UseSession();       // ✅ Before Authorization
 app.UseAuthorization();
 
-// Default route
+// Routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.Run();
-        }
-    }
-}
+app.Run();
