@@ -13,9 +13,7 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-        // =========================
-        // REGISTER (PATIENT ONLY)
-        // =========================
+      
         public IActionResult Register()
         {
             return View();
@@ -28,7 +26,6 @@ namespace Legend_clinic.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Check duplicate username
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserName == model.UserName);
 
@@ -38,30 +35,30 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-                
-                var patient = new Patient
-                {
-                    Name = model.Name,
-                    Dob = model.Dob,
-                    Gender = model.Gender,
-                    Address = model.Address,
-                    Phone = model.Phone,
-                    Email = model.Email,
-                    Summary = ""
-                };
+            
+            var patient = new Patient
+            {
+                Name = model.Name ?? model.UserName,
+                Dob = model.Dob,
+                Gender = model.Gender ?? "Unknown",
+                Address = model.Address ?? "",
+                Phone = model.Phone ?? "",
+                Email = model.Email ?? "",
+                Summary = ""
+            };
 
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-
-                var user = new User
-                {
-                    UserName = model.UserName,
-                    Password = model.Password,
-                    Role = "Patient",
-                    ReferenceId = patient.PatientId,
-                    IsApproved = false
-                };
+            // 2. Create User linked to Patient
+            var user = new User
+            {
+                UserName = model.UserName,
+                Password = model.Password, // (Later: hash this)
+                Role = "Patient",
+                ReferenceId = patient.PatientId,
+                IsApproved = false // 🔥 Admin must approve
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -70,9 +67,7 @@ namespace Legend_clinic.Controllers
                 return RedirectToAction("Login");
             }
 
-        // =========================
-        // LOGIN
-        // =========================
+       
         public IActionResult Login()
         {
             return View();
@@ -87,20 +82,25 @@ namespace Legend_clinic.Controllers
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
-                if (user != null)
-                {
-                    
-                    if (!user.IsApproved)
-                    {
-                        ViewBag.Error = "Your account is waiting for admin approval.";
-                        return View(model);
-                    }
+            if (user == null)
+            {
+                ViewBag.Error = "Invalid username or password!";
+                return View(model);
+            }
 
-                    HttpContext.Session.SetString("UserName", user.UserName);
-                    HttpContext.Session.SetString("Role", user.Role);
-                    HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+            // 🔥 BLOCK UNAPPROVED USERS
+            if (!user.IsApproved)
+            {
+                ViewBag.Error = "Your account is waiting for admin approval.";
+                return View(model);
+            }
 
-            // REDIRECT BY ROLE
+            // SESSION
+            HttpContext.Session.SetString("UserName", user.UserName);
+            HttpContext.Session.SetString("Role", user.Role);
+            HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+
+           
             return user.Role switch
             {
                 "Admin" => RedirectToAction("AdminDashboard", "Home"),
@@ -112,12 +112,9 @@ namespace Legend_clinic.Controllers
             };
         }
 
-                ViewBag.Error = "Invalid username or password!";
-            }
-
-            return View(model); // ✅ IMPORTANT
-        }
-        // GET: /Account/Logout
+        // =========================
+        // LOGOUT
+        // =========================
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

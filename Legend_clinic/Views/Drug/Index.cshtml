@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+@model List<Legend_clinic.Models.Drug>
+
+<h2 class="mb-4 text-primary">Available Drugs</h2>
+
+<div class="row">
+
+    @foreach (var drug in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title text-success">
+                        @drug.Title
+                    </h5>
+
+                    <p class="card-text">
+                        @drug.Description
+                    </p>
+
+                    <p>
+                        <strong>Dosage:</strong> @drug.Dosage
+                    </p>
+
+                    <p>
+                        <strong>Expiry:</strong> @drug.Expiry.ToString("dd-MM-yyyy")
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+    }
+
+</div>
+
