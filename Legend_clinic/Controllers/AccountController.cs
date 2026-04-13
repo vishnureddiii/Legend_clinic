@@ -13,6 +13,9 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
+        // =========================
+        // REGISTER (PATIENT ONLY)
+        // =========================
         public IActionResult Register()
         {
             return View();
@@ -22,17 +25,20 @@ namespace Legend_clinic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // Check duplicate username
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == model.UserName);
+
+            if (existingUser != null)
             {
-                var existingUser = await _context.Users
-                    .FirstOrDefaultAsync(u => u.UserName == model.UserName);
+                ViewBag.Error = "Username already exists!";
+                return View(model);
+            }
 
-                if (existingUser != null)
-                {
-                    ViewBag.Error = "Username already exists!";
-                    return View(model);
-                }
-
+                
                 var patient = new Patient
                 {
                     Name = model.Name,
@@ -44,8 +50,9 @@ namespace Legend_clinic.Controllers
                     Summary = ""
                 };
 
-                _context.Patients.Add(patient);
-                await _context.SaveChangesAsync();
+            _context.Patients.Add(patient);
+            await _context.SaveChangesAsync();
+
 
                 var user = new User
                 {
@@ -56,15 +63,16 @@ namespace Legend_clinic.Controllers
                     IsApproved = false
                 };
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
+                ViewBag.Success = "Registered successfully! Wait for admin approval.";
                 return RedirectToAction("Login");
             }
 
-            return View(model);
-        }
-
+        // =========================
+        // LOGIN
+        // =========================
         public IActionResult Login()
         {
             return View();
@@ -77,40 +85,39 @@ namespace Legend_clinic.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u =>
-                        u.UserName == model.UserName &&
-                        u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
                 if (user != null)
                 {
+                    
                     if (!user.IsApproved)
                     {
                         ViewBag.Error = "Your account is waiting for admin approval.";
                         return View(model);
                     }
 
-                    // ================= SESSION FIX =================
                     HttpContext.Session.SetString("UserName", user.UserName);
                     HttpContext.Session.SetString("Role", user.Role);
                     HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
 
-                    return user.Role switch
-                    {
-                        "Admin" => RedirectToAction("AdminDashboard", "Home"),
-                        "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
-                        "Patient" => RedirectToAction("PatientDashboard", "Home"),
-                        "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
-                        "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
-                        _ => RedirectToAction("Index", "Home")
-                    };
-                }
+            // REDIRECT BY ROLE
+            return user.Role switch
+            {
+                "Admin" => RedirectToAction("AdminDashboard", "Home"),
+                "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
+                "Patient" => RedirectToAction("PatientDashboard", "Home"),
+                "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
+                "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
+                _ => RedirectToAction("Index", "Home")
+            };
+        }
 
                 ViewBag.Error = "Invalid username or password!";
             }
 
-            return View(model);
+            return View(model); // ✅ IMPORTANT
         }
-
+        // GET: /Account/Logout
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

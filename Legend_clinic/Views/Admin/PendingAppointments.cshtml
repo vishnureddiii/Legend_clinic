@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewData["Title"] = "PendingAppointments";
+}
+
+@model List<Legend_clinic.Models.Appointment>
+
+<h2>Pending Appointments</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Patient.Name</td>
+                <td>@item.Physician.Name</td>
+                <td>@item.AppointmentDateTime</td>
+                <td>@item.Reason</td>
+
+                <td>
+                    <a asp-action="ApproveAppointment" asp-route-id="@item.AppointmentId"
+                       class="btn btn-success btn-sm">Approve</a>
+
+                    <a asp-action="RejectAppointment" asp-route-id="@item.AppointmentId"
+                       class="btn btn-danger btn-sm">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

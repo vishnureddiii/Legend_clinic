@@ -1,0 +1,49 @@
+﻿@model Legend_clinic.Models.Appointment
+
+<h2>Book Appointment</h2>
+
+<form asp-action="BookAppointment" method="post">
+
+    <!-- DOCTOR -->
+    <div class="mb-3">
+        <label>Doctor</label>
+        <select asp-for="PhysicianId" class="form-control" required>
+            <option value="">-- Select Doctor --</option>
+            @foreach (var doc in ViewBag.Doctors)
+            {
+                <option value="@doc.PhysicianId">@doc.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- DATE -->
+    <div class="mb-3">
+        <label>Date & Time</label>
+        <input asp-for="AppointmentDateTime" type="datetime-local" class="form-control" required />
+    </div>
+
+    <!-- CRITICALITY -->
+    <div class="mb-3">
+        <label>Criticality</label>
+        <select asp-for="Criticality" class="form-control" required>
+            <option value="">-- Select --</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+    </div>
+
+    <!-- REASON -->
+    <div class="mb-3">
+        <label>Reason</label>
+        <input asp-for="Reason" class="form-control" required />
+    </div>
+
+    <!-- NOTE -->
+    <div class="mb-3">
+        <label>Note</label>
+        <input asp-for="Note" class="form-control" required />
+    </div>
+
+    <button class="btn btn-success">Book</button>
+</form>
