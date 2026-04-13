@@ -308,7 +308,7 @@ namespace Legend_clinic.Controllers
 
             return RedirectToAction("ManageSuppliers");
         }
-        // 🔥 VIEW PENDING APPOINTMENTS
+       
         public async Task<IActionResult> PendingAppointments()
         {
             if (!IsAdmin())

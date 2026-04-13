@@ -14,9 +14,7 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-        // =========================
-        // REGISTER (PATIENT ONLY)
-        // =========================
+      
         public IActionResult Register()
         {
             return View();
@@ -29,7 +27,6 @@ namespace Legend_clinic.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Check duplicate username
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserName == model.UserName);
 
@@ -39,7 +36,7 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            // 1. Create Patient FIRST
+            
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -54,14 +51,14 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            // 2. Create User linked to Patient
+          
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password, // (Later: hash this)
+                Password = model.Password, 
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false // 🔥 Admin must approve
+                IsApproved = false 
             };
 
             _context.Users.Add(user);
@@ -71,9 +68,7 @@ namespace Legend_clinic.Controllers
             return RedirectToAction("Login");
         }
 
-        // =========================
-        // LOGIN
-        // =========================
+       
         public IActionResult Login()
         {
             return View();
@@ -97,19 +92,19 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            // 🔥 BLOCK UNAPPROVED USERS
+            
             if (!user.IsApproved)
             {
                 ViewBag.Error = "Your account is waiting for admin approval.";
                 return View(model);
             }
 
-            // SESSION
+           
             HttpContext.Session.SetString("UserName", user.UserName);
             HttpContext.Session.SetString("Role", user.Role);
             HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
 
-            // REDIRECT BY ROLE
+           
             return user.Role switch
             {
                 "Admin" => RedirectToAction("AdminDashboard", "Home"),
@@ -121,9 +116,7 @@ namespace Legend_clinic.Controllers
             };
         }
 
-        // =========================
-        // LOGOUT
-        // =========================
+       
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

@@ -4,37 +4,257 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Clinic System</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+            body {
+                background: #f4f7fc;
+            }
+
+            .hero {
+                background: linear-gradient(135deg, #198754, #20c997);
+                color: white;
+                padding: 100px 20px;
+                text-align: center;
+            }
+
+                .hero h1 {
+                    font-weight: 800;
+                }
+
+            .feature-card {
+                transition: 0.3s;
+                border: none;
+            }
+
+                .feature-card:hover {
+                    transform: translateY(-5px);
+                }
+
+            .section-title {
+                font-weight: 700;
+            }
+    </style>
 </head>
+
 <body>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container">
-            <a class="navbar-brand fs-3 fw-bold" asp-controller="Home" asp-action="Index">Clinic System</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand fw-bold" href="/">
+                🏥 Clinic System
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="collapse navbar-collapse justify-content-end" id="nav">
                 <ul class="navbar-nav">
+
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light rounded-pill px-4" asp-controller="Account" asp-action="Login">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    @* <li class="nav-item">
+                        <a class="nav-link" href="/">Drug</a>
+                    </li> *@
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Drug" asp-action="Index">
+                            Druginfo
+                        </a>
+                        <a class="nav-link" asp-controller="Account" asp-action="Register">
+                            Register
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ms-2 px-3" asp-controller="Account" asp-action="Login">
+                            Login
+                        </a>
+                    </li>
+
                 </ul>
             </div>
+
         </div>
     </nav>
 
-    <div class="container mt-4">
-        @RenderBody()
-    </div>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>WELCOME TO CLINIC SYSTEM</h1>
+            <p class="lead">Your Health, Our Priority</p>
+
+            <div >
+                
+                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg me-2">
+                    Register
+                </a>
+                <a href="/Account/Login" class="btn btn-outline-light btn-lg">
+                    Login
+                </a>
+            </div>
+        </div>
+    </section>
+
+   
+    <section class="container py-5 text-center">
+
+        <h2 class="section-title mb-4">Our Services</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 feature-card">
+                    <h4>👨‍⚕️ Expert Doctors</h4>
+                    <p>Professional and experienced medical team.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 feature-card">
+                    <h4>💊 Quality Care</h4>
+                    <p>Safe and reliable healthcare services.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4 feature-card">
+                    <h4>📅 Easy Appointments</h4>
+                    <p>Book appointments anytime, anywhere.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+   
+    <section class="container py-5">
+
+        <div class="row align-items-center">
+
+            <div class="col-md-6">
+                <h2 class="section-title">About Our Clinic</h2>
+                <p class="text-muted">
+                    Our clinic provides high-quality healthcare services with modern facilities.
+                    We ensure patient safety, comfort, and the best treatment experience.
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4 text-center">
+                    <h3>Trusted Healthcare System</h3>
+                    <p>Serving patients with care and dedication.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    
+    <section class="bg-success text-white text-center py-5">
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <h2>500+</h2>
+                    <p>Patients Served</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>20+</h2>
+                    <p>Medical Staff</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>10+</h2>
+                    <p>Years Experience</p>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="container py-5 text-center">
+
+        <h2 class="section-title mb-4">What Patients Say</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <p>"Excellent service and care."</p>
+                    <h6>- Patient A</h6>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <p>"Very professional doctors."</p>
+                    <h6>- Patient B</h6>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <p>"Easy booking and fast treatment."</p>
+                    <h6>- Patient C</h6>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CONTACT -->
+    <section class="container py-5">
+
+        <h2 class="section-title text-center mb-4">Contact Us</h2>
+
+        <div class="row">
+
+          @*   <div class="col-md-6">
+                <input class="form-control mb-3" placeholder="Your Name">
+                <input class="form-control mb-3" placeholder="Email">
+                <textarea class="form-control mb-3" placeholder="Message"></textarea>
+                <button class="btn btn-success">Send Message</button>
+            </div> *@
+
+            <div class="col-md-6" >
+                <div class="card p-4 shadow-sm">
+                    <h5>📍 Address</h5>
+                    <p>Meyyur, India</p>
+
+                    <h5>📞 Phone</h5>
+                    <p>+91 9876543210</p>
+
+                    <h5>✉ Email</h5>
+                    <p>clinic@email.com</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; @DateTime.Now.Year Clinic System. All rights reserved.</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    @* Render optional page-specific scripts *@
+    @RenderBody()
+
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

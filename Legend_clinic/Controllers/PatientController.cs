@@ -13,13 +13,13 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-        // 🔐 Check Patient Role
+       
         private bool IsPatient()
         {
             return HttpContext.Session.GetString("Role") == "Patient";
         }
 
-        // 🏠 Dashboard
+        
         public IActionResult Index()
         {
             if (!IsPatient())
@@ -28,13 +28,13 @@ namespace Legend_clinic.Controllers
             return View();
         }
 
-        // 📅 BOOK APPOINTMENT (GET)
+      
         public IActionResult BookAppointment()
         {
             if (!IsPatient())
                 return RedirectToAction("AccessDenied", "Home");
 
-            // Load doctors
+            
             ViewBag.Doctors = _context.Physicians.ToList();
 
             return View();
@@ -78,7 +78,7 @@ namespace Legend_clinic.Controllers
             }
         }
 
-        //📄 VIEW MY APPOINTMENTS
+       
         public IActionResult MyAppointments()
         {
             if (!IsPatient())
