@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
+    ViewData["Title"] = "Give Advice";
+}
+
+<div class="card shadow p-5">
+    <h2 class="text-primary mb-4">Doctor Advice</h2>
+
+    <form asp-action="GiveAdvice" method="post">
+
+        <input type="hidden"
+               name="scheduleId"
+               value="@ViewBag.ScheduleId" />
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Advice</label>
+
+            <textarea name="advice"
+                      class="form-control"
+                      rows="6"
+                      placeholder="Enter doctor consultation notes"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-success px-4">
+            Save Advice
+        </button>
+
+    </form>
+</div>

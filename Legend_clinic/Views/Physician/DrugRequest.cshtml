@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
+    ViewData["Title"] = "Drug Request";
+}
+
+<div class="card shadow p-5">
+    <h2 class="text-primary mb-4">Send Drug Request</h2>
+
+    <form asp-action="DrugRequest" method="post">
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Drug Details</label>
+
+            <textarea name="drugInfoText"
+                      class="form-control"
+                      rows="5"
+                      placeholder="Enter medicine name, quantity, note"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-success px-4">
+            Send Request
+        </button>
+
+    </form>
+</div>

@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
+    ViewData["Title"] = "Give Prescription";
+}
+
+<div class="card shadow p-5">
+    <h2 class="text-primary mb-4">Add Prescription</h2>
+
+    <form asp-action="GivePrescription" method="post">
+
+        <input type="hidden"
+               name="physicianAdviceId"
+               value="@ViewBag.PhysicianAdviceId" />
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Medicine</label>
+
+            <select name="drugIds" class="form-select">
+                @foreach (var drug in ViewBag.Drugs)
+                {
+                    <option value="@drug.DrugId">
+                        @drug.DrugName
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Prescription</label>
+
+            <input type="text"
+                   name="prescriptions"
+                   class="form-control"
+                   placeholder="Ex: 1 tablet twice daily" />
+        </div>
+
+        <button type="submit"
+                class="btn btn-success px-4">
+            Save Prescription
+        </button>
+
+    </form>
+</div>

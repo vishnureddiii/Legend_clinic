@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Appointment>
+@{
+    Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
+    ViewData["Title"] = "Appointments";
+}
+
+<h3>My Appointments</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var schedule = item.Schedules.FirstOrDefault();
+
+            <tr>
+                <td>@item.Patient?.Name</td>
+                <td>@item.AppointmentDateTime</td>
+                <td>@item.Reason</td>
+                <td>@item.ScheduleStatus</td>
+
+                <td>
+                    @if (schedule != null)
+                    {
+                        <a asp-action="GiveAdvice"
+                               asp-route-scheduleId="@schedule.ScheduleId"
+                               class="btn btn-primary btn-sm">
+                            Start Consultation
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
