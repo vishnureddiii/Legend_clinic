@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Legend_clinic.Models;
 
@@ -51,22 +50,22 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-          
+            // 2. Create User linked to Patient
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password, 
+                Password = model.Password, // (Later: hash this)
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false 
+                IsApproved = false // 🔥 Admin must approve
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Registered successfully! Wait for admin approval.";
-            return RedirectToAction("Login");
-        }
+                ViewBag.Success = "Registered successfully! Wait for admin approval.";
+                return RedirectToAction("Login");
+            }
 
        
         public IActionResult Login()
@@ -78,13 +77,10 @@ namespace Legend_clinic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u =>
-                    u.UserName == model.UserName &&
-                    u.Password == model.Password);
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
             if (user == null)
             {
@@ -92,14 +88,14 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            
+            // 🔥 BLOCK UNAPPROVED USERS
             if (!user.IsApproved)
             {
                 ViewBag.Error = "Your account is waiting for admin approval.";
                 return View(model);
             }
 
-           
+            // SESSION
             HttpContext.Session.SetString("UserName", user.UserName);
             HttpContext.Session.SetString("Role", user.Role);
             HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
@@ -116,7 +112,9 @@ namespace Legend_clinic.Controllers
             };
         }
 
-       
+        // =========================
+        // LOGOUT
+        // =========================
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
