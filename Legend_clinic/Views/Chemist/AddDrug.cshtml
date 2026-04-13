@@ -1,0 +1,22 @@
+﻿@model Legend_clinic.Models.Drug
+
+@{
+    ViewData["Title"] = "Add Drug";
+    Layout = "~/Views/Shared/_LayoutChemist.cshtml";
+}
+
+<h2>Add Drug</h2>
+
+<form asp-action="AddDrug" method="post">
+
+    <input asp-for="Title" class="form-control mb-2" placeholder="Drug Title" />
+
+    <input asp-for="Description" class="form-control mb-2" placeholder="Description" />
+
+    <input asp-for="Dosage" class="form-control mb-2" placeholder="Dosage" />
+
+    <input asp-for="Expiry" type="date" class="form-control mb-2" />
+
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>

@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Chemist Panel</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+            body {
+                overflow-x: hidden;
+            }
+
+            .sidebar {
+                height: 100vh;
+                background-color: #343a40;
+                padding-top: 20px;
+            }
+
+                .sidebar a {
+                    color: white;
+                    display: block;
+                    padding: 12px;
+                    text-decoration: none;
+                }
+
+                    .sidebar a:hover {
+                        background-color: #495057;
+                    }
+
+            .content {
+                padding: 20px;
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand ms-3">Chemist Panel</span>
+
+        <div class="me-3">
+            <a asp-controller="Account" asp-action="Logout" class="btn btn-danger btn-sm">
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+
+                <a asp-controller="Chemist" asp-action="Index">🏠 Dashboard</a>
+
+                <a asp-controller="Chemist" asp-action="ManageDrugs">💊 Manage Drugs</a>
+
+                <a asp-controller="Chemist" asp-action="DrugRequests">📋 Drug Requests</a>
+
+                <a asp-controller="Chemist" asp-action="CreatePurchaseOrder">
+                    📦 Create Purchase Order
+                </a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 content">
+                @RenderBody()
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
