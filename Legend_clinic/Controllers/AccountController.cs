@@ -13,11 +13,17 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
+        // =========================
+        // REGISTER (GET)
+        // =========================
         public IActionResult Register()
         {
             return View();
         }
 
+        // =========================
+        // REGISTER (POST)
+        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -34,6 +40,7 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
+            
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -48,30 +55,32 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
+            // 2. Create User linked to Patient
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password,
+                Password = model.Password, // (Later: hash this)
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false
+                IsApproved = false // 🔥 Admin must approve
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            ViewBag.Success = "Registered successfully! Wait for admin approval.";
-            return RedirectToAction("Login");
-        }
+                ViewBag.Success = "Registered successfully! Wait for admin approval.";
+                return RedirectToAction("Login");
+            }
 
-        // =========================
-        // LOGIN
-        // =========================
+       
         public IActionResult Login()
         {
             return View();
         }
 
+        // =========================
+        // LOGIN (POST)
+        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -79,9 +88,7 @@ namespace Legend_clinic.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u =>
-                        u.UserName == model.UserName &&
-                        u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
                 if (user == null)
                 {
@@ -89,26 +96,29 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                if (!user.IsApproved)
-                {
-                    ViewBag.Error = "Your account is waiting for admin approval.";
-                    return View(model);
-                }
-
-                HttpContext.Session.SetString("UserName", user.UserName);
-                HttpContext.Session.SetString("Role", user.Role);
-                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
-
-                return user.Role switch
-                {
-                    "Admin" => RedirectToAction("AdminDashboard", "Home"),
-                    "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
-                    "Patient" => RedirectToAction("PatientDashboard", "Home"),
-                    "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
-                    "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
-                    _ => RedirectToAction("Index", "Home")
-                };
+            // 🔥 BLOCK UNAPPROVED USERS
+            if (!user.IsApproved)
+            {
+                ViewBag.Error = "Your account is waiting for admin approval.";
+                return View(model);
             }
+
+            // SESSION
+            HttpContext.Session.SetString("UserName", user.UserName);
+            HttpContext.Session.SetString("Role", user.Role);
+            HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+
+           
+            return user.Role switch
+            {
+                "Admin" => RedirectToAction("AdminDashboard", "Home"),
+                "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
+                "Patient" => RedirectToAction("PatientDashboard", "Home"),
+                "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
+                "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
+                _ => RedirectToAction("Index", "Home")
+            };
+        }
 
             return View(model);
         }

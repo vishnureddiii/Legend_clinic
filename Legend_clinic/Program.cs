@@ -1,9 +1,9 @@
-using Legend_clinic.Models;
+﻿using Legend_clinic.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Add services
 builder.Services.AddControllersWithViews();
 
 
