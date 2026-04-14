@@ -3,24 +3,55 @@
     ViewData["Title"] = "Drug Request";
 }
 
-<div class="card shadow p-5">
-    <h2 class="text-primary mb-4">Send Drug Request</h2>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-5">
 
-    <form asp-action="DrugRequest" method="post">
+        <h2 class="text-primary fw-bold mb-4">
+            Send Drug Request
+        </h2>
 
-        <div class="mb-4">
-            <label class="form-label fw-bold">Drug Details</label>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        }
 
-            <textarea name="drugInfoText"
-                      class="form-control"
-                      rows="5"
-                      placeholder="Enter medicine name, quantity, note"></textarea>
-        </div>
+        <form asp-action="DrugRequest" method="post">
 
-        <button type="submit"
-                class="btn btn-success px-4">
-            Send Request
-        </button>
+            <div class="mb-4">
+                <label class="form-label fw-bold fs-5">
+                    Drug Details
+                </label>
 
-    </form>
+                <textarea name="drugInfoText"
+                          class="form-control form-control-lg"
+                          rows="6"
+                          placeholder="Enter medicine name, quantity, dosage, and note"
+                          required></textarea>
+
+                <div class="form-text">
+                    Example: Paracetamol - 10 strips, Vitamin C - 5 bottles
+                </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button type="submit"
+                        class="btn btn-success btn-lg px-4">
+                    Send Request
+                </button>
+
+                <a asp-action="Dashboard"
+                       class="btn btn-secondary btn-lg px-4">
+                    Back
+                </a>
+            </div>
+
+        </form>
+
+    </div>
 </div>

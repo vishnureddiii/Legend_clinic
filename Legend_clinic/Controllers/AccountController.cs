@@ -13,12 +13,17 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-      
+        // =========================
+        // REGISTER (GET)
+        // =========================
         public IActionResult Register()
         {
             return View();
         }
 
+        // =========================
+        // REGISTER (POST)
+        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -35,7 +40,7 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            
+            // Create Patient
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -50,37 +55,43 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            // 2. Create User linked to Patient
+            // Create User
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password, // (Later: hash this)
+                Password = model.Password, // ⚠️ Replace with hashing later
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false // 🔥 Admin must approve
+                IsApproved = false // Admin approval required
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-                ViewBag.Success = "Registered successfully! Wait for admin approval.";
-                return RedirectToAction("Login");
-            }
+            TempData["Success"] = "Registered successfully! Wait for admin approval.";
+            return RedirectToAction("Login");
+        }
 
-       
+        // =========================
+        // LOGIN (GET)
+        // =========================
         public IActionResult Login()
         {
             return View();
         }
 
+        // =========================
+        // LOGIN (POST)
+        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
                 if (user == null)
                 {
@@ -95,23 +106,21 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                // SESSION
-                HttpContext.Session.SetString("UserName", user.UserName);
-                HttpContext.Session.SetString("Role", user.Role);
-                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+            // SESSION
+            HttpContext.Session.SetString("UserName", user.UserName);
+            HttpContext.Session.SetString("Role", user.Role);
+            HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
 
-
-                return user.Role switch
-                {
-                    "Admin" => RedirectToAction("AdminDashboard", "Home"),
-                    "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
-                    "Patient" => RedirectToAction("PatientDashboard", "Home"),
-                    "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
-                    "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
-                    _ => RedirectToAction("Index", "Home")
-                };
-            }
-            return View(model);
+           
+            return user.Role switch
+            {
+                "Admin" => RedirectToAction("AdminDashboard", "Home"),
+                "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
+                "Patient" => RedirectToAction("PatientDashboard", "Home"),
+                "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
+                "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
+                _ => RedirectToAction("Index", "Home")
+            };
         }
 
         // =========================

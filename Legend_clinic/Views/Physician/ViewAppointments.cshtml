@@ -1,42 +1,46 @@
-﻿@model IEnumerable<Appointment>
+﻿@model IEnumerable<Legend_clinic.Models.Appointment>
+
 @{
     Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
     ViewData["Title"] = "Appointments";
 }
 
-<h3>My Appointments</h3>
+<h2 class="mb-4">My Appointments</h2>
 
-<table class="table table-bordered">
-    <thead>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<table class="table table-bordered table-hover">
+    <thead class="table-primary">
         <tr>
             <th>Patient</th>
             <th>Date</th>
             <th>Reason</th>
             <th>Status</th>
-            <th>Action</th>
+            <th>Consultation</th>
         </tr>
     </thead>
 
     <tbody>
         @foreach (var item in Model)
         {
-            var schedule = item.Schedules.FirstOrDefault();
-
             <tr>
                 <td>@item.Patient?.Name</td>
-                <td>@item.AppointmentDateTime</td>
+                <td>@item.AppointmentDateTime.ToString("dd-MM-yyyy hh:mm tt")</td>
                 <td>@item.Reason</td>
                 <td>@item.ScheduleStatus</td>
 
                 <td>
-                    @if (schedule != null)
-                    {
-                        <a asp-action="GiveAdvice"
-                               asp-route-scheduleId="@schedule.ScheduleId"
-                               class="btn btn-primary btn-sm">
-                            Start Consultation
-                        </a>
-                    }
+                    <a asp-controller="Physician"
+                           asp-action="GiveAdvice"
+                           asp-route-appointmentId="@item.AppointmentId"
+                           class="btn btn-success btn-sm">
+                        Add Prescription
+                    </a>
                 </td>
             </tr>
         }
