@@ -40,7 +40,7 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            
+
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -68,11 +68,11 @@ namespace Legend_clinic.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-                ViewBag.Success = "Registered successfully! Wait for admin approval.";
-                return RedirectToAction("Login");
-            }
+            ViewBag.Success = "Registered successfully! Wait for admin approval.";
+            return RedirectToAction("Login");
+        }
 
-       
+
         public IActionResult Login()
         {
             return View();
@@ -96,39 +96,31 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-            // 🔥 BLOCK UNAPPROVED USERS
-            if (!user.IsApproved)
-            {
-                ViewBag.Error = "Your account is waiting for admin approval.";
-                return View(model);
+                // 🔥 BLOCK UNAPPROVED USERS
+                if (!user.IsApproved)
+                {
+                    ViewBag.Error = "Your account is waiting for admin approval.";
+                    return View(model);
+                }
+
+                // SESSION
+                HttpContext.Session.SetString("UserName", user.UserName);
+                HttpContext.Session.SetString("Role", user.Role);
+                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+
+
+                return user.Role switch
+                {
+                    "Admin" => RedirectToAction("AdminDashboard", "Home"),
+                    "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
+                    "Patient" => RedirectToAction("PatientDashboard", "Home"),
+                    "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
+                    "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
+                    _ => RedirectToAction("Index", "Home")
+                };
             }
 
-            // SESSION
-            HttpContext.Session.SetString("UserName", user.UserName);
-            HttpContext.Session.SetString("Role", user.Role);
-            HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
-
-           
-            return user.Role switch
-            {
-                case "Admin":
-                    return RedirectToAction("AdminDashboard", "Home");
-
-                case "Doctor":
-                    return RedirectToAction("DoctorDashboard", "Home");
-
-                case "Patient":
-                    return RedirectToAction("PatientDashboard", "Home");
-
-                case "Chemist":
-                    return RedirectToAction("ChemistDashboard", "Home");
-
-                case "Supplier":
-                    return RedirectToAction("SupplierDashboard", "Home");
-
-                default:
-                    return RedirectToAction("Index", "Home");
-            }
+            return View(model);
         }
 
         // =========================
