@@ -82,34 +82,36 @@ namespace Legend_clinic.Controllers
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
-            if (user == null)
-            {
-                ViewBag.Error = "Invalid username or password!";
-                return View(model);
+                if (user == null)
+                {
+                    ViewBag.Error = "Invalid username or password!";
+                    return View(model);
+                }
+
+                // 🔥 BLOCK UNAPPROVED USERS
+                if (!user.IsApproved)
+                {
+                    ViewBag.Error = "Your account is waiting for admin approval.";
+                    return View(model);
+                }
+
+                // SESSION
+                HttpContext.Session.SetString("UserName", user.UserName);
+                HttpContext.Session.SetString("Role", user.Role);
+                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+
+
+                return user.Role switch
+                {
+                    "Admin" => RedirectToAction("AdminDashboard", "Home"),
+                    "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
+                    "Patient" => RedirectToAction("PatientDashboard", "Home"),
+                    "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
+                    "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
+                    _ => RedirectToAction("Index", "Home")
+                };
             }
-
-            // 🔥 BLOCK UNAPPROVED USERS
-            if (!user.IsApproved)
-            {
-                ViewBag.Error = "Your account is waiting for admin approval.";
-                return View(model);
-            }
-
-            // SESSION
-            HttpContext.Session.SetString("UserName", user.UserName);
-            HttpContext.Session.SetString("Role", user.Role);
-            HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
-
-           
-            return user.Role switch
-            {
-                "Admin" => RedirectToAction("AdminDashboard", "Home"),
-                "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
-                "Patient" => RedirectToAction("PatientDashboard", "Home"),
-                "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
-                "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
-                _ => RedirectToAction("Index", "Home")
-            };
+            return View(model);
         }
 
         // =========================

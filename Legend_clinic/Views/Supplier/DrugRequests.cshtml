@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "DrugRequests";
+    Layout = "~/Views/Shared/_LayoutSupplier.cshtml";
+}
+
+
+
+@model List<Legend_clinic.Models.DrugRequest>
+
+<h2>Drug Requests</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Physician</th>
+            <th>Drug Info</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DrugRequestId</td>
+                <td>@item.Physician?.Name</td>
+                <td>@item.DrugInfoText</td>
+                <td>@item.RequestDate</td>
+                <td>@item.RequestStatus</td>
+                <td>
+                    <a asp-action="AcceptDrugRequest" asp-route-id="@item.DrugRequestId" class="btn btn-success">Accept</a>
+                    <a asp-action="RejectDrugRequest" asp-route-id="@item.DrugRequestId" class="btn btn-danger">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
