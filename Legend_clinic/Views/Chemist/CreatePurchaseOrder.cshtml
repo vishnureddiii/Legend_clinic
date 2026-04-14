@@ -1,0 +1,43 @@
+﻿@model Legend_clinic.Models.CreatePOViewModel
+
+@{
+    ViewData["Title"] = "Create Purchase Order";
+    Layout = "~/Views/Shared/_LayoutChemist.cshtml";
+}
+
+<h2>Create Purchase Order</h2>
+
+<form asp-controller="Chemist" asp-action="CreatePurchaseOrder" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Supplier</label>
+        <select asp-for="SupplierId" asp-items="Model.Suppliers" class="form-control">
+            <option value="">-- Select Supplier --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Drug</label>
+        <select asp-for="DrugId" asp-items="Model.Drugs" class="form-control">
+            <option value="">-- Select Drug --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Quantity</label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Create Order
+    </button>
+
+</form>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}

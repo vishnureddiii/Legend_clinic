@@ -40,7 +40,7 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-            // Create Patient
+            
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -55,26 +55,24 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            // Create User
+            // 2. Create User linked to Patient
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password, // ⚠️ Replace with hashing later
+                Password = model.Password, // (Later: hash this)
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false // Admin approval required
+                IsApproved = false // 🔥 Admin must approve
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Registered successfully! Wait for admin approval.";
-            return RedirectToAction("Login");
-        }
+                ViewBag.Success = "Registered successfully! Wait for admin approval.";
+                return RedirectToAction("Login");
+            }
 
-        // =========================
-        // LOGIN (GET)
-        // =========================
+       
         public IActionResult Login()
         {
             return View();
@@ -87,11 +85,10 @@ namespace Legend_clinic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
                 if (user == null)
                 {
@@ -99,12 +96,12 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                // 🔥 BLOCK UNAPPROVED USERS
-                if (!user.IsApproved)
-                {
-                    ViewBag.Error = "Your account is waiting for admin approval.";
-                    return View(model);
-                }
+            // 🔥 BLOCK UNAPPROVED USERS
+            if (!user.IsApproved)
+            {
+                ViewBag.Error = "Your account is waiting for admin approval.";
+                return View(model);
+            }
 
             // SESSION
             HttpContext.Session.SetString("UserName", user.UserName);
@@ -114,13 +111,24 @@ namespace Legend_clinic.Controllers
            
             return user.Role switch
             {
-                "Admin" => RedirectToAction("AdminDashboard", "Home"),
-                "Doctor" => RedirectToAction("DoctorDashboard", "Home"),
-                "Patient" => RedirectToAction("PatientDashboard", "Home"),
-                "Chemist" => RedirectToAction("ChemistDashboard", "Home"),
-                "Supplier" => RedirectToAction("SupplierDashboard", "Home"),
-                _ => RedirectToAction("Index", "Home")
-            };
+                case "Admin":
+                    return RedirectToAction("AdminDashboard", "Home");
+
+                case "Doctor":
+                    return RedirectToAction("DoctorDashboard", "Home");
+
+                case "Patient":
+                    return RedirectToAction("PatientDashboard", "Home");
+
+                case "Chemist":
+                    return RedirectToAction("ChemistDashboard", "Home");
+
+                case "Supplier":
+                    return RedirectToAction("SupplierDashboard", "Home");
+
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
 
         // =========================
