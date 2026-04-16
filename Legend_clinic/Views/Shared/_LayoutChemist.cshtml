@@ -1,75 +1,155 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Chemist Panel</title>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Chemist Panel</title>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 
     <style>
             body {
-                overflow-x: hidden;
+                margin: 0;
+                background: #f4f7ff;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            /* NAVBAR */
+            .chemist-navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                z-index: 1000;
+                background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+                color: white;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .sidebar {
-                height: 100vh;
-                background-color: #343a40;
-                padding-top: 20px;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 220px;
+                height: calc(100vh - 60px);
+                background: #0d6efd;
+                padding: 15px;
             }
 
                 .sidebar a {
-                    color: white;
                     display: block;
+                    color: white;
                     padding: 12px;
+                    margin-bottom: 8px;
                     text-decoration: none;
+                    border-radius: 8px;
                 }
 
                     .sidebar a:hover {
-                        background-color: #495057;
+                        background: rgba(255,255,255,0.2);
                     }
 
-            .content {
+            .content-area {
+                margin-left: 220px;
+                margin-top: 60px;
                 padding: 20px;
+            }
+
+            .stat-card {
+                border-radius: 12px;
+                padding: 20px;
+                background: white;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             }
     </style>
 </head>
 
 <body>
 
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-dark bg-dark">
-        <span class="navbar-brand ms-3">Chemist Panel</span>
+    <!-- NAVBAR -->
+    <div class="chemist-navbar">
+        <div>🧪 Chemist Panel</div>
 
-        <div class="me-3">
-            <a asp-controller="Account" asp-action="Logout" class="btn btn-danger btn-sm">
+        <div>
+            👤 @Context.Session.GetString("UserName")
+
+            <a asp-controller="Account" asp-action="Logout" class="btn btn-danger btn-sm ms-2">
                 Logout
             </a>
         </div>
-    </nav>
-
-    <div class="container-fluid">
-        <div class="row">
-
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar">
-
-                <a asp-controller="Chemist" asp-action="Index">🏠 Dashboard</a>
-
-                <a asp-controller="Chemist" asp-action="ManageDrugs">💊 Manage Drugs</a>
-
-                <a asp-controller="Chemist" asp-action="DrugRequests">📋 Drug Requests</a>
-
-                <a asp-controller="Chemist" asp-action="CreatePurchaseOrder">
-                    📦 Create Purchase Order
-                </a>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-10 content">
-                @RenderBody()
-            </div>
-
-        </div>
     </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <a asp-controller="Chemist" asp-action="Index">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <a asp-controller="Chemist" asp-action="ManageDrugs">
+            <i class="bi bi-capsule"></i> Manage Drugs
+        </a>
+
+        <a asp-controller="Chemist" asp-action="DrugRequests">
+            <i class="bi bi-clipboard-check"></i> Drug Requests
+        </a>
+
+        <a asp-controller="Chemist" asp-action="CreatePurchaseOrder">
+            <i class="bi bi-cart-plus"></i> Purchase Orders
+        </a>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+
+        @if (ViewBag.TotalDrugs != null)
+        {
+            <div class="row g-4 mb-3">
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h6 class="text-muted">Total Drugs</h6>
+                        <h3 class="text-primary">@ViewBag.TotalDrugs</h3>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h6 class="text-muted">Drug Requests</h6>
+                        <h3 class="text-primary">@ViewBag.TotalRequests</h3>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <h6 class="text-muted">Orders</h6>
+                        <h3 class="text-primary">@ViewBag.TotalOrders</h3>
+                    </div>
+                </div>
+
+            </div>
+        }
+
+        <!-- PAGE CONTENT -->
+        @RenderBody()
+
+    </div>
+
+    <!-- ✅ ADD THIS (VERY IMPORTANT FIX) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts")
+    }
 
 </body>
 </html>

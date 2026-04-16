@@ -5,18 +5,47 @@
     Layout = "~/Views/Shared/_LayoutChemist.cshtml";
 }
 
-<h2>Add Drug</h2>
+<div class="container mt-4">
 
-<form asp-action="AddDrug" method="post">
+    <!-- BACK BUTTON -->
+    <a asp-action="Index" class="btn btn-secondary mb-3">
+        ⬅ Back to Dashboard
+    </a>
 
-    <input asp-for="Title" class="form-control mb-2" placeholder="Drug Title" />
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4>💊 Add New Drug</h4>
+        </div>
 
-    <input asp-for="Description" class="form-control mb-2" placeholder="Description" />
+        <div class="card-body">
 
-    <input asp-for="Dosage" class="form-control mb-2" placeholder="Dosage" />
+            <form asp-action="AddDrug" method="post">
 
-    <input asp-for="Expiry" type="date" class="form-control mb-2" />
+                <div class="mb-3">
+                    <label class="form-label">Drug Title</label>
+                    <input asp-for="Title" class="form-control" />
+                </div>
 
-    <button type="submit" class="btn btn-success">Save</button>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <input asp-for="Description" class="form-control" />
+                </div>
 
-</form>
+                <div class="mb-3">
+                    <label class="form-label">Dosage</label>
+                    <input asp-for="Dosage" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Expiry</label>
+                    <input asp-for="Expiry" type="date" class="form-control" />
+                </div>
+
+                <button class="btn btn-success">Save Drug</button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

@@ -5,39 +5,164 @@
     Layout = "~/Views/Shared/_LayoutChemist.cshtml";
 }
 
-<h2>Create Purchase Order</h2>
+<div class="container mt-4">
 
-<form asp-controller="Chemist" asp-action="CreatePurchaseOrder" method="post">
+    <!-- BACK BUTTON -->
+    <a asp-action="Index" class="btn btn-secondary mb-3">
+        ⬅ Back to Dashboard
+    </a>
 
-    @Html.AntiForgeryToken()
+    <div class="card shadow-lg border-0 rounded-4">
 
-    <div class="mb-3">
-        <label>Supplier</label>
-        <select asp-for="SupplierId" asp-items="Model.Suppliers" class="form-control">
-            <option value="">-- Select Supplier --</option>
-        </select>
+        <!-- HEADER -->
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">📦 Create Purchase Order</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- SUCCESS MESSAGE -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- VALIDATION SUMMARY -->
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <form asp-action="CreatePurchaseOrder" method="post">
+
+                <!-- SUPPLIER -->
+                <div class="mb-4">
+                    <label class="fw-bold">Select Supplier</label>
+                    <select asp-for="SupplierId" asp-items="Model.Suppliers" class="form-select form-select-lg">
+                        <option value="">-- Select Supplier --</option>
+                    </select>
+                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                </div>
+
+                <!-- ITEMS HEADER -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-primary">Order Items</h5>
+
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            onclick="addRow()">
+                        ➕ Add Item
+                    </button>
+                </div>
+
+                <!-- ITEMS CONTAINER -->
+                <div id="itemsContainer">
+
+                    <!-- FIRST ROW -->
+                    <div class="row g-3 itemRow mb-3">
+
+                        <!-- DRUG -->
+                        <div class="col-md-5">
+                            <label>Drug</label>
+                            <select name="Items[0].DrugId" class="form-select">
+                                <option value="">-- Select Drug --</option>
+                                @foreach (var d in Model.Drugs)
+                                {
+                                    <option value="@d.Value">@d.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- QUANTITY -->
+                        <div class="col-md-4">
+                            <label>Quantity</label>
+                            <input type="number"
+                                   name="Items[0].Quantity"
+                                   class="form-control"
+                                   min="1"
+                                   placeholder="Enter quantity" />
+                        </div>
+
+                        <!-- REMOVE -->
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button"
+                                    class="btn btn-danger w-100"
+                                    onclick="removeRow(this)">
+                                Remove
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- SUBMIT -->
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        ✅ Create Purchase Order
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label>Drug</label>
-        <select asp-for="DrugId" asp-items="Model.Drugs" class="form-control">
-            <option value="">-- Select Drug --</option>
-        </select>
-    </div>
+<!-- ================= SCRIPT ================= -->
+@section Scripts {
 
-    <div class="mb-3">
-        <label>Quantity</label>
-        <input asp-for="Quantity" class="form-control" />
-    </div>
+    <script>
+        let index = 1;
 
-    <button type="submit" class="btn btn-success">
-        Create Order
-    </button>
+        function addRow() {
 
-</form>
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
-    </div>
+            let container = document.getElementById("itemsContainer");
+
+            let html = `
+            <div class="row g-3 itemRow mb-3">
+
+                <div class="col-md-5">
+                    <label>Drug</label>
+                    <select name="Items[${index}].DrugId" class="form-select">
+                        <option value="">-- Select Drug --</option>
+                        @foreach (var d in Model.Drugs)
+                        {
+                                <option value="@d.Value">@d.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label>Quantity</label>
+                    <input type="number"
+                           name="Items[${index}].Quantity"
+                           class="form-control"
+                           min="1"
+                           placeholder="Enter quantity" />
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="button"
+                            class="btn btn-danger w-100"
+                            onclick="removeRow(this)">
+                        Remove
+                    </button>
+                </div>
+
+            </div>`;
+
+            container.insertAdjacentHTML("beforeend", html);
+            index++;
+        }
+
+        function removeRow(btn) {
+            let rows = document.querySelectorAll(".itemRow");
+
+            if (rows.length > 1) {
+                btn.closest(".itemRow").remove();
+            }
+        }
+    </script>
+
 }

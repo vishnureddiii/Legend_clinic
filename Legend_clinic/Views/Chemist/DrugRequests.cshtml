@@ -1,47 +1,66 @@
 ﻿@model IEnumerable<Legend_clinic.Models.DrugRequest>
 
 @{
-    ViewData["Title"] = "Drug Requests";
     Layout = "~/Views/Shared/_LayoutChemist.cshtml";
 }
 
-<h2>Drug Requests</h2>
+<div class="container mt-4">
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Physician</th>
-            <th>Drug Info</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
+    <!-- BACK BUTTON -->
+    <a asp-action="Index" class="btn btn-secondary mb-3">
+        ⬅ Back to Dashboard
+    </a>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.PhysicianId</td>
-                <td>@item.DrugInfoText</td>
-                <td>@item.RequestDate.ToString("yyyy-MM-dd")</td>
-                <td>@item.RequestStatus</td>
-                <td>
-                    <a asp-action="UpdateRequestStatus"
-                           asp-route-id="@item.DrugRequestId"
-                           asp-route-status="Approved"
-                           class="btn btn-success btn-sm">
-                        Approve
-                    </a>
+    <div class="card shadow">
+        <div class="card-header bg-warning">
+            <h4>📋 Drug Requests</h4>
+        </div>
 
-                    <a asp-action="UpdateRequestStatus"
-                           asp-route-id="@item.DrugRequestId"
-                           asp-route-status="Rejected"
-                           class="btn btn-danger btn-sm">
-                        Reject
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Physician</th>
+                        <th>Drug Info</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.PhysicianId</td>
+                            <td>@item.DrugInfoText</td>
+                            <td>@item.RequestDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <span class="badge bg-info">@item.RequestStatus</span>
+                            </td>
+                            <td>
+                                <a asp-action="UpdateRequestStatus"
+                                       asp-route-id="@item.DrugRequestId"
+                                       asp-route-status="Approved"
+                                       class="btn btn-success btn-sm">
+                                    ✔ Approve
+                                </a>
+
+                                <a asp-action="UpdateRequestStatus"
+                                       asp-route-id="@item.DrugRequestId"
+                                       asp-route-status="Rejected"
+                                       class="btn btn-danger btn-sm">
+                                    ✖ Reject
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
