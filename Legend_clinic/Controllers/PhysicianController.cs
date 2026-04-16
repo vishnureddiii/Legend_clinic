@@ -25,15 +25,6 @@ namespace Legend_clinic.Controllers
             return HttpContext.Session.GetInt32("ReferenceId");
         }
 
-        // ================= DASHBOARD =================
-        public IActionResult Dashboard()
-        {
-            if (!IsDoctorLoggedIn())
-                return RedirectToAction("Login", "Account");
-
-            return View();
-        }
-
         // ================= APPOINTMENTS =================
         public async Task<IActionResult> ViewAppointments()
         {
@@ -45,13 +36,14 @@ namespace Legend_clinic.Controllers
             var appointments = await _context.Appointments
                 .Include(a => a.Patient)
                 .Include(a => a.Schedules)
+                    .ThenInclude(s => s.PhysicianAdvices)
                 .Where(a => a.PhysicianId == doctorId)
                 .ToListAsync();
 
             return View(appointments);
         }
 
-        // ================= GIVE ADVICE + MULTIPLE PRESCRIPTIONS =================
+        // ================= GIVE ADVICE =================
         [HttpGet]
         public IActionResult GiveAdvice(int appointmentId)
         {
@@ -62,8 +54,6 @@ namespace Legend_clinic.Controllers
                 return RedirectToAction("ViewAppointments");
 
             ViewBag.AppointmentId = appointmentId;
-
-            // ✅ Ensure drugs always loaded
             ViewBag.Drugs = _context.Drugs.ToList();
 
             return View();
@@ -80,7 +70,6 @@ namespace Legend_clinic.Controllers
             if (!IsDoctorLoggedIn())
                 return RedirectToAction("Login", "Account");
 
-            // ✅ ALWAYS reload dropdown data
             ViewBag.AppointmentId = appointmentId;
             ViewBag.Drugs = _context.Drugs.ToList();
 
@@ -99,7 +88,18 @@ namespace Legend_clinic.Controllers
                 return View();
             }
 
-            // ✅ Get or create schedule
+            // ❗ CHECK duplicate
+            var existingAdvice = await _context.PhysicianAdvices
+                .Include(a => a.Schedule)
+                .FirstOrDefaultAsync(a => a.Schedule.AppointmentId == appointmentId);
+
+            if (existingAdvice != null)
+            {
+                TempData["Error"] = "Prescription already exists.";
+                return RedirectToAction("ViewAppointments");
+            }
+
+            // ✅ Schedule
             var schedule = await _context.Schedules
                 .FirstOrDefaultAsync(s => s.AppointmentId == appointmentId);
 
@@ -116,7 +116,7 @@ namespace Legend_clinic.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // ✅ Save Advice
+            // ✅ Advice
             var physicianAdvice = new PhysicianAdvice
             {
                 ScheduleId = schedule.ScheduleId,
@@ -126,7 +126,7 @@ namespace Legend_clinic.Controllers
             _context.PhysicianAdvices.Add(physicianAdvice);
             await _context.SaveChangesAsync();
 
-            // ✅ Save MULTIPLE prescriptions safely
+            // ✅ Prescriptions
             if (drugIds != null && prescriptions != null)
             {
                 for (int i = 0; i < drugIds.Count; i++)
@@ -151,51 +151,27 @@ namespace Legend_clinic.Controllers
             return RedirectToAction("ViewAppointments");
         }
 
-        // ================= EXTRA PRESCRIPTION =================
-        [HttpGet]
-        public IActionResult GivePrescription(int physicianAdviceId)
+        // ================= VIEW PRESCRIPTION =================
+        public async Task<IActionResult> ViewPrescription(int appointmentId)
         {
             if (!IsDoctorLoggedIn())
                 return RedirectToAction("Login", "Account");
 
-            ViewBag.PhysicianAdviceId = physicianAdviceId;
-            ViewBag.Drugs = _context.Drugs.ToList();
+            var data = await _context.PhysicianAdvices
+                .Include(a => a.Schedule)
+                .Include(a => a.PhysicianPrescriptions)
+                    .ThenInclude(p => p.Drug)
+                .Where(a => a.Schedule.AppointmentId == appointmentId)
+                .ToListAsync();
 
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GivePrescription(
-            int physicianAdviceId,
-            List<int> drugIds,
-            List<string> prescriptions)
-        {
-            if (!IsDoctorLoggedIn())
-                return RedirectToAction("Login", "Account");
-
-            if (drugIds != null && prescriptions != null)
+            if (data == null || !data.Any())
             {
-                for (int i = 0; i < drugIds.Count; i++)
-                {
-                    if (i < prescriptions.Count &&
-                        !string.IsNullOrWhiteSpace(prescriptions[i]))
-                    {
-                        _context.PhysicianPrescriptions.Add(new PhysicianPrescription
-                        {
-                            PhysicianAdviceId = physicianAdviceId,
-                            DrugId = drugIds[i],
-                            Prescription = prescriptions[i]
-                        });
-                    }
-                }
-
-                await _context.SaveChangesAsync();
+                TempData["Error"] = "No prescription found.";
+                return RedirectToAction("ViewAppointments");
             }
 
-            TempData["Success"] = "Prescription saved successfully.";
-
-            return RedirectToAction("ViewAppointments");
+            // ✅ IMPORTANT FIX → explicitly load correct view
+            return View("ViewPrescription", data);
         }
 
         // ================= DRUG REQUEST =================
@@ -223,7 +199,6 @@ namespace Legend_clinic.Controllers
 
             var doctorId = GetDoctorId();
 
-            // ✅ EXTRA SAFETY (avoid null crash)
             if (doctorId == null)
                 return RedirectToAction("Login", "Account");
 
@@ -237,7 +212,7 @@ namespace Legend_clinic.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Drug request sent to chemist successfully.";
+            TempData["Success"] = "Drug request sent successfully.";
 
             return RedirectToAction("DrugRequest");
         }

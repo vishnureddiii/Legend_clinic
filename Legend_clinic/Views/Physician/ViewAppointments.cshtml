@@ -2,7 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_LayoutPhysician.cshtml";
-    ViewData["Title"] = "Appointments";
+    ViewData["Title"] = "My Appointments";
 }
 
 <h2 class="mb-4">My Appointments</h2>
@@ -11,6 +11,13 @@
 {
     <div class="alert alert-success">
         @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
     </div>
 }
 
@@ -30,17 +37,35 @@
         {
             <tr>
                 <td>@item.Patient?.Name</td>
+
+                <!-- ✅ FORMAT DATE PROPERLY -->
                 <td>@item.AppointmentDateTime.ToString("dd-MM-yyyy hh:mm tt")</td>
+
                 <td>@item.Reason</td>
-                <td>@item.ScheduleStatus</td>
+
+                <!-- ✅ SAFE STATUS -->
+                <td>@(item.Schedules?.FirstOrDefault()?.ScheduleStatus ?? "Pending")</td>
 
                 <td>
-                    <a asp-controller="Physician"
-                           asp-action="GiveAdvice"
-                           asp-route-appointmentId="@item.AppointmentId"
-                           class="btn btn-success btn-sm">
-                        Add Prescription
-                    </a>
+                    @if (item.Schedules != null &&
+                                             item.Schedules.Any(s => s.PhysicianAdvices.Any()))
+                    {
+                        <!-- ✅ VIEW BUTTON -->
+                        <a asp-action="ViewPrescription"
+                               asp-route-appointmentId="@item.AppointmentId"
+                               class="btn btn-info btn-sm">
+                            View Prescription
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- ✅ ADD BUTTON -->
+                        <a asp-action="GiveAdvice"
+                               asp-route-appointmentId="@item.AppointmentId"
+                               class="btn btn-success btn-sm">
+                            Add Prescription
+                        </a>
+                    }
                 </td>
             </tr>
         }
