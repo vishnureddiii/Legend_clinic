@@ -19,7 +19,8 @@
 
         <div class="card-body">
 
-            <form asp-action="AddDrug" method="post">
+            <!-- FORM -->
+            <form asp-action="AddDrug" method="post" id="drugForm">
 
                 <div class="mb-3">
                     <label class="form-label">Drug Title</label>
@@ -38,7 +39,10 @@
 
                 <div class="mb-3">
                     <label class="form-label">Expiry</label>
-                    <input asp-for="Expiry" type="date" class="form-control" />
+                    <input asp-for="Expiry"
+                           type="date"
+                           class="form-control"
+                           id="expiryDate" />
                 </div>
 
                 <button class="btn btn-success">Save Drug</button>
@@ -49,3 +53,31 @@
     </div>
 
 </div>
+
+<!-- VALIDATION SCRIPT -->
+@section Scripts {
+    <script>
+        document.getElementById("drugForm").addEventListener("submit", function (e) {
+
+            let expiryValue = document.getElementById("expiryDate").value;
+
+            if (expiryValue) {
+
+                let selectedDate = new Date(expiryValue);
+
+                // remove time part
+                selectedDate.setHours(0, 0, 0, 0);
+
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                // ❌ invalid if past date
+                if (selectedDate < today) {
+                    e.preventDefault();
+                    alert("❌ Invalid date! Expiry must be today or a future date.");
+                }
+            }
+
+        });
+    </script>
+}

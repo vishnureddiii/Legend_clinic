@@ -106,7 +106,7 @@ namespace Legend_clinic.Controllers
                 // SESSION
                 HttpContext.Session.SetString("UserName", user.UserName);
                 HttpContext.Session.SetString("Role", user.Role);
-                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
+                HttpContext.Session.SetInt32("SupplierId", user.ReferenceId);
 
 
                 return user.Role switch

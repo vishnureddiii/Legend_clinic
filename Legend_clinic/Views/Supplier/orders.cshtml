@@ -1,0 +1,29 @@
+﻿@model List<Legend_clinic.Models.PurchaseOrderHeader>
+
+@{
+    ViewData["Title"] = "Purchase Orders";
+    Layout = "~/Views/Shared/_SupplierLayout.cshtml";
+}
+
+<h2>Purchase Orders</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Poid</td>
+                <td>@item.Podate</td>
+                <td>@item.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
