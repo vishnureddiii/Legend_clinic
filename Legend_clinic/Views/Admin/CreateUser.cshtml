@@ -1,87 +1,137 @@
-﻿
-@{
-    ViewData["Title"] = "CreateUser";
-}
+﻿@model Legend_clinic.Models.CreateUserViewModel
 
-
-
-@model Legend_clinic.Models.CreateUserViewModel
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Create User";
 }
 
-<h2 class="mb-4">Create User</h2>
+<style>
+    .form-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
 
-<form asp-action="CreateUser" method="post">
+    .section-title {
+        color: #0b5ed7;
+        font-weight: 600;
+        margin-top: 15px;
+    }
 
-    <!-- Account Info -->
-    <h5 class="text-primary">Account Details</h5>
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+    }
 
-    <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
-        <input asp-for="UserName" class="form-control" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
+        .btn-back:hover {
+            background: #5a6268;
+        }
+</style>
 
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+<div class="form-card">
 
-    <div class="mb-3">
-        <label asp-for="Role" class="form-label"></label>
-        <select asp-for="Role" class="form-select">
-            <option value="">Select Role</option>
-            <option value="Doctor">Doctor</option>
-            <option value="Chemist">Chemist</option>
-            <option value="Supplier">Supplier</option>
-        </select>
-        <span asp-validation-for="Role" class="text-danger"></span>
-    </div>
+    <h3 class="mb-4 text-primary">➕ Create User</h3>
 
-    <hr />
+    <form asp-action="CreateUser" method="post">
 
-    <!-- Profile Info -->
-    <h5 class="text-primary">Details</h5>
+        <!-- ACCOUNT -->
+        <h5 class="section-title">Account Details</h5>
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="UserName" class="form-label"></label>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Address" class="form-label"></label>
-        <input asp-for="Address" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Phone" class="form-label"></label>
-        <input asp-for="Phone" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="Role" class="form-label"></label>
+            <select asp-for="Role" class="form-select" id="roleSelect">
+                <option value="">Select Role</option>
+                <option value="Doctor">Doctor</option>
+                <option value="Chemist">Chemist</option>
+                <option value="Supplier">Supplier</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-    </div>
+        <hr />
 
-    <div class="mb-3">
-        <label asp-for="Specialization" class="form-label"></label>
-        <input asp-for="Specialization" class="form-control" />
-        <small class="text-muted">Only for Doctor</small>
-    </div>
+        <!-- DETAILS -->
+        <h5 class="section-title">Details</h5>
 
-    <div class="mb-3">
-        <label asp-for="Summary" class="form-label"></label>
-        <input asp-for="Summary" class="form-control" />
-    </div>
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+        </div>
 
-    <button type="submit" class="btn btn-success w-100">
-        Create User
-    </button>
-</form>
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label"></label>
+            <input asp-for="Address" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <!-- SPECIALIZATION (ONLY DOCTOR) -->
+        <div class="mb-3" id="specDiv">
+            <label asp-for="Specialization" class="form-label"></label>
+            <input asp-for="Specialization" class="form-control" />
+            <small class="text-muted">Only required for Doctor</small>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Summary" class="form-label"></label>
+            <input asp-for="Summary" class="form-control" />
+        </div>
+
+        <!-- BUTTONS -->
+        <button type="submit" class="btn btn-success w-100 mb-2">
+            Create User
+        </button>
+
+        <a asp-controller="Home" asp-action="AdminDashboard" class="btn btn-secondary mb-3">
+            ← Back to Dashboard
+        </a>
+
+    </form>
+
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function toggleSpecialization() {
+            var role = document.getElementById("roleSelect").value;
+            var specDiv = document.getElementById("specDiv");
+
+            if (role === "Doctor") {
+                specDiv.style.display = "block";
+            } else {
+                specDiv.style.display = "none";
+                document.querySelector("[name='Specialization']").value = "";
+            }
+        }
+
+        document.getElementById("roleSelect").addEventListener("change", toggleSpecialization);
+
+        // run on page load
+        toggleSpecialization();
+    </script>
 }

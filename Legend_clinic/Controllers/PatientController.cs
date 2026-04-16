@@ -49,23 +49,33 @@ namespace Legend_clinic.Controllers
                 if (string.IsNullOrEmpty(userName))
                     return Content("Session expired");
 
-                var patientId = _context.Users
-                    .Where(u => u.UserName == userName && u.Role == "Patient")
-                    .Select(u => u.ReferenceId)
-                    .FirstOrDefault();
+                var user = _context.Users
+                    .FirstOrDefault(u => u.UserName == userName && u.Role == "Patient");
 
-                if (patientId == 0)
-                    return Content("Invalid patient mapping");
+                if (user == null)
+                    return Content("User not found");
 
-                if (!_context.Patients.Any(p => p.PatientId == patientId))
+                if (user.ReferenceId == null || user.ReferenceId == 0)
+                    return Content("Patient mapping missing in Users table");
+
+                var patientId = user.ReferenceId;
+
+                var patientExists = _context.Patients
+                    .Any(p => p.PatientId == patientId);
+
+                if (!patientExists)
                     return Content("Patient does not exist in Patient table");
 
+                // ✅ FIXED PART
                 model.PatientId = patientId;
 
+                // IMPORTANT: doctor assigned later
+                model.PhysicianId = null;   // ONLY works if int?
+
                 model.ScheduleStatus = "Pending";
-                model.Criticality ??= "Low";
-                model.Reason ??= "N/A";
-                model.Note ??= "N/A";
+                model.Criticality = string.IsNullOrEmpty(model.Criticality) ? "Low" : model.Criticality;
+                model.Reason = string.IsNullOrEmpty(model.Reason) ? "N/A" : model.Reason;
+                model.Note = string.IsNullOrEmpty(model.Note) ? "N/A" : model.Note;
 
                 _context.Appointments.Add(model);
                 await _context.SaveChangesAsync();
@@ -78,7 +88,7 @@ namespace Legend_clinic.Controllers
             }
         }
 
-       
+
         public IActionResult MyAppointments()
         {
             if (!IsPatient())
@@ -93,5 +103,23 @@ namespace Legend_clinic.Controllers
 
             return View(appointments);
         }
+        public IActionResult MyPrescriptions()
+        {
+            if (!IsPatient())
+                return RedirectToAction("AccessDenied", "Home");
+
+            int patientId = HttpContext.Session.GetInt32("ReferenceId") ?? 0;
+
+            var prescriptions = _context.PhysicianPrescriptions
+    .Include(p => p.Drug)
+    .Include(p => p.PhysicianAdvice)
+        .ThenInclude(a => a.Schedule)
+            .ThenInclude(s => s.Appointment)
+    .Where(p => p.PhysicianAdvice.Schedule.Appointment.PatientId == patientId)
+    .ToList();
+
+            return View(prescriptions);
+        }
+
     }
 }

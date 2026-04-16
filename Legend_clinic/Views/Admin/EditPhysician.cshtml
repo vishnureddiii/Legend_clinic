@@ -10,6 +10,10 @@
 }
 
 <h2>Edit Physician</h2>
+<a asp-controller="Admin" asp-action="ManagePhysicians"
+       class="btn btn-outline-primary mb-3">
+    ← Back 
+</a>
 
 <form asp-action="EditPhysician" method="post">
     <input type="hidden" asp-for="PhysicianId" />

@@ -12,6 +12,10 @@
 }
 
 <h2>Manage Suppliers</h2>
+<a asp-controller="Home" asp-action="AdminDashboard"
+       class="btn btn-outline-primary mb-3">
+    ← Back to Home
+</a>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -31,8 +35,8 @@
                 <td>@supplier.Phone</td>
                 <td>
                     <a asp-action="EditSupplier" asp-route-id="@supplier.SupplierId" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="DeleteSupplier" asp-route-id="@supplier.SupplierId" class="btn btn-sm btn-danger"
-                       onclick="return confirm('Are you sure you want to delete this supplier?');">Delete</a>
+                   @*  <a asp-action="DeleteSupplier" asp-route-id="@supplier.SupplierId" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this supplier?');">Delete</a> *@
                 </td>
             </tr>
         }

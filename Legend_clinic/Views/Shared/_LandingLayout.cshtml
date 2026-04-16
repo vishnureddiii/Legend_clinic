@@ -5,50 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Clinic System</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+
             body {
-                background: #f4f7fc;
+                margin: 0;
+                padding: 0;
+                font-family: 'Segoe UI', sans-serif;
+                background: #f6f9ff;
             }
 
-            .hero {
-                background: linear-gradient(135deg, #198754, #20c997);
-                color: white;
-                padding: 100px 20px;
-                text-align: center;
+            /* FIXED NAVBAR */
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 70px;
+                z-index: 1000;
+                background: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
             }
+
+                .navbar .nav-link,
+                .navbar .navbar-brand {
+                    color: white !important;
+                }
+
+                    .navbar .nav-link:hover {
+                        color: #cfe2ff !important;
+                    }
+
+            /* HERO (NO GAP, STARTS BELOW NAVBAR) */
+            .hero {
+                position: relative;
+                margin-top: 70px; /* EXACT SAME AS NAVBAR HEIGHT */
+
+                min-height: 65vh;
+                background: linear-gradient(rgba(11, 94, 215, 0.55), rgba(13, 202, 240, 0.55)), url('https://images.unsplash.com/photo-1582750433449-648ed127bb54');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                color: white;
+            }
+
+                .hero::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: rgba(0,0,0,0.20);
+                }
+
+                .hero .container {
+                    position: relative;
+                    z-index: 2;
+                }
 
                 .hero h1 {
                     font-weight: 800;
+                    font-size: 2.4rem;
                 }
 
-            .feature-card {
-                transition: 0.3s;
+            /* BUTTON */
+            .btn-primary-soft {
+                background: #0d6efd;
                 border: none;
+                color: white;
+            }
+
+                .btn-primary-soft:hover {
+                    background: #0b5ed7;
+                }
+
+            /* SECTION TITLE */
+            .section-title {
+                font-weight: 700;
+                color: #0b5ed7;
+            }
+
+            /* CARDS */
+            .feature-card {
+                border: none;
+                border-radius: 14px;
+                transition: 0.3s;
+                height: 100%;
             }
 
                 .feature-card:hover {
-                    transform: translateY(-5px);
+                    transform: translateY(-6px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
                 }
 
-            .section-title {
-                font-weight: 700;
+            .card {
+                border-radius: 14px;
             }
+
+            /* STATS */
+            .stats {
+                background: linear-gradient(135deg, #0b5ed7, #0dcaf0);
+            }
+
+            /* CONTACT */
+            .contact-center {
+                display: flex;
+                justify-content: center;
+            }
+
+            /* FOOTER */
+            footer {
+                background: #0b5ed7;
+            }
+
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
+            <a class="navbar-brand fw-bold" href="/">🏥 Legend Clinic</a>
 
-            <a class="navbar-brand fw-bold" href="/">
-                🏥 Clinic System
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -56,75 +143,61 @@
                 <ul class="navbar-nav">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link active" href="/">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Drug" asp-action="Index">
-                            Druginfo
-                        </a>
+                        <a class="nav-link" asp-controller="Drug" asp-action="Index">Drug Info</a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Register">
-                            Register
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light ms-2 px-3"
-                               asp-controller="Account" asp-action="Login">
-                            Login
-                        </a>
+                   
                     </li>
 
                 </ul>
             </div>
-
         </div>
     </nav>
 
-    
+    <!-- HERO -->
     <section class="hero">
         <div class="container">
-            <h1>WELCOME TO CLINIC SYSTEM</h1>
-            <p class="lead">Your Health, Our Priority</p>
+            <h1>WELCOME TO LEGEND CLINIC</h1>
+            <p class="lead mb-4">Your Health, Our Priority</p>
 
-            <div >
-                
-                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg me-2">
-                    Register
-                </a>
-                <a href="/Account/Login" class="btn btn-outline-light btn-lg">
-                    Login
-                </a>
-            </div>
+            <a asp-controller="Account" asp-action="Register"
+               class="btn btn-primary-soft btn-lg fw-bold">
+                Patient Register
+            </a>
+
+            <a asp-controller="Account" asp-action="Login"
+                   class="btn btn-primary-soft btn-lg fw-bold">
+                Login
+            </a>
         </div>
     </section>
 
-   
+    <!-- SERVICES -->
     <section class="container py-5 text-center">
-
         <h2 class="section-title mb-4">Our Services</h2>
 
         <div class="row g-4">
 
-            <div class="col-md-4">
-                <div class="card shadow-sm p-4 feature-card">
+            <div class="col-md-4 d-flex">
+                <div class="card shadow-sm p-4 feature-card w-100">
                     <h4>👨‍⚕️ Expert Doctors</h4>
                     <p>Professional and experienced medical team.</p>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card shadow-sm p-4 feature-card">
+            <div class="col-md-4 d-flex">
+                <div class="card shadow-sm p-4 feature-card w-100">
                     <h4>💊 Quality Care</h4>
                     <p>Safe and reliable healthcare services.</p>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card shadow-sm p-4 feature-card">
+            <div class="col-md-4 d-flex">
+                <div class="card shadow-sm p-4 feature-card w-100">
                     <h4>📅 Easy Appointments</h4>
                     <p>Book appointments anytime, anywhere.</p>
                 </div>
@@ -133,33 +206,30 @@
         </div>
     </section>
 
-   
+    <!-- ABOUT -->
     <section class="container py-5">
-
         <div class="row align-items-center">
 
             <div class="col-md-6">
                 <h2 class="section-title">About Our Clinic</h2>
                 <p class="text-muted">
-                    Our clinic provides high-quality healthcare services with modern facilities.
-                    We ensure patient safety, comfort, and the best treatment experience.
+                    We provide modern healthcare services with patient safety,
+                    comfort, and quality as top priorities.
                 </p>
             </div>
 
             <div class="col-md-6">
                 <div class="card shadow-sm p-4 text-center">
-                    <h3>Trusted Healthcare System</h3>
+                    <h4>Trusted Healthcare System</h4>
                     <p>Serving patients with care and dedication.</p>
                 </div>
             </div>
 
         </div>
-
     </section>
 
-    
-    <section class="bg-success text-white text-center py-5">
-
+    <!-- STATS -->
+    <section class="stats text-white text-center py-5">
         <div class="container">
             <div class="row">
 
@@ -180,57 +250,45 @@
 
             </div>
         </div>
-
     </section>
 
     <!-- TESTIMONIALS -->
     <section class="container py-5 text-center">
-
         <h2 class="section-title mb-4">What Patients Say</h2>
 
         <div class="row g-4">
 
             <div class="col-md-4">
                 <div class="card shadow-sm p-3">
-                    <p>"Excellent service and care."</p>
-                    <h6>- Patient A</h6>
+                    <p>"Excellent service and friendly doctors."</p>
+                    <h6>- Arjun Kumar</h6>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card shadow-sm p-3">
-                    <p>"Very professional doctors."</p>
-                    <h6>- Patient B</h6>
+                    <p>"Very smooth experience."</p>
+                    <h6>- Priya Sharma</h6>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card shadow-sm p-3">
-                    <p>"Easy booking and fast treatment."</p>
-                    <h6>- Patient C</h6>
+                    <p>"Quick treatment and good care."</p>
+                    <h6>- Rahul Verma</h6>
                 </div>
             </div>
 
         </div>
-
     </section>
 
     <!-- CONTACT -->
     <section class="container py-5">
-
         <h2 class="section-title text-center mb-4">Contact Us</h2>
 
-        <div class="row">
-
-          @*   <div class="col-md-6">
-                <input class="form-control mb-3" placeholder="Your Name">
-                <input class="form-control mb-3" placeholder="Email">
-                <textarea class="form-control mb-3" placeholder="Message"></textarea>
-                <button class="btn btn-success">Send Message</button>
-            </div> *@
-
-            <div class="col-md-6" >
-                <div class="card p-4 shadow-sm">
+        <div class="contact-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4 text-center">
                     <h5>📍 Address</h5>
                     <p>Meyyur, India</p>
 
@@ -241,20 +299,18 @@
                     <p>clinic@email.com</p>
                 </div>
             </div>
-
         </div>
-
     </section>
 
-    
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">&copy; @DateTime.Now.Year Clinic System. All rights reserved.</p>
+    <!-- FOOTER -->
+    <footer class="text-white text-center py-3">
+        <p class="mb-0">&copy; @DateTime.Now.Year Legend Clinic. All rights reserved.</p>
     </footer>
 
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     @RenderBody()
-
     @RenderSection("Scripts", required: false)
 
 </body>

@@ -11,6 +11,10 @@
 }
 
 <h2>Edit Supplier</h2>
+<a asp-controller="Admin" asp-action="ManageSuppliers"
+       class="btn btn-outline-primary mb-3">
+    ← Back 
+</a>
 
 <form asp-action="EditSupplier" method="post">
     <input type="hidden" asp-for="SupplierId" />

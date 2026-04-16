@@ -1,11 +1,16 @@
 ﻿
 @{
-    ViewData["Title"] = "PendingPatients";
+    Layout = "_AdminLayout";
+   
 }
 
-<h1>PendingPatients</h1>
+
 
 @model IEnumerable<Legend_clinic.Models.User>
+<a asp-controller="Home" asp-action="AdminDashboard"
+       class="btn btn-outline-primary mb-3">
+    ← Back to Home
+</a>
 
 <h2>Pending Patients</h2>
 

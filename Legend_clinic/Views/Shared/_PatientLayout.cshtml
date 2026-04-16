@@ -1,104 +1,158 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@ViewData["Title"] - Patient Dashboard</title>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Patient Panel</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+
+            body {
+                margin: 0;
+                background: #f4f7ff;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+      
+            .admin-navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                z-index: 1000;
+                background: linear-gradient(135deg, #0b5ed7, #0dcaf0);
+                color: white;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+            .brand {
+                font-weight: bold;
+                font-size: 18px;
+            }
+
+            .user-box {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .btn-logout {
+                background: #dc3545;
+                border: none;
+                color: white;
+                padding: 5px 12px;
+                border-radius: 6px;
+            }
+
+                .btn-logout:hover {
+                    background: #bb2d3b;
+                }
+
+           
+            .sidebar {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 220px;
+                height: calc(100vh - 60px);
+                background: #0b5ed7;
+                padding: 15px;
+                overflow-y: auto;
+            }
+
+                .sidebar a {
+                    display: block;
+                    color: white;
+                    padding: 12px 15px;
+                    margin-bottom: 8px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    transition: 0.3s;
+                    font-weight: 500;
+                }
+
+                    .sidebar a:hover {
+                        background: rgba(255,255,255,0.2);
+                        transform: translateX(5px);
+                    }
+
+            /* ===== CONTENT ===== */
+            .content-area {
+                margin-left: 220px;
+                margin-top: 60px;
+                padding: 20px;
+            }
+
+            .admin-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+            /* ===== MOBILE ===== */
+            @@media (max-width: 768px) {
+
+                .sidebar {
+                    width: 180px;
+                }
+
+                .content-area {
+                    margin-left: 180px;
+                }
+            }
+
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm fixed-top">
-        <div class="container-fluid">
+    <div class="admin-navbar">
+        <div class="brand">
+            🏥 Patient Panel
+        </div>
 
-            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="PatientDashboard">
-                🏥 Patient Portal
+        <div class="user-box">
+            <span>👤 @Context.Session.GetString("UserName")</span>
+
+            <a asp-controller="Account" asp-action="Logout" class="btn-logout">
+                Logout
             </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="topNav">
-
-                <!-- LEFT MENU -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Patient" asp-action="BookAppointment">
-                            <i class="bi bi-calendar-plus"></i> Book
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Patient" asp-action="MyAppointments">
-                            <i class="bi bi-list-check"></i> Appointments
-                        </a>
-                    </li>
-
-                </ul>
-
-                <!-- RIGHT USER -->
-                <ul class="navbar-nav ms-auto align-items-center">
-
-                    <li class="nav-item me-3">
-                        <span class="text-white">
-                            <i class="bi bi-person-circle"></i>
-                            @Context.Session.GetString("UserName")
-                        </span>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="btn btn-light btn-sm" asp-controller="Account" asp-action="Logout">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="container-fluid" style="margin-top:80px;">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
 
-        <div class="row">
+        <a asp-controller="Patient" asp-action="BookAppointment">
+            ➕ Book Appointment
+        </a>
 
-            <!-- SIDEBAR -->
-            <div class="col-md-3">
+        <a asp-controller="Patient" asp-action="MyAppointments">
+            📅 My Appointments
+        </a>
+        <a asp-controller="Patient" asp-action="MyPrescriptions">
+            💊 My Prescriptions
+        </a>
 
-                <div class="list-group shadow-sm">
+    </div>
 
-                    <a class="list-group-item list-group-item-action" asp-controller="Patient" asp-action="BookAppointment">
-                        <i class="bi bi-calendar-plus me-2 text-success"></i> Book Appointment
-                    </a>
+    <!-- CONTENT -->
+    <div class="content-area">
 
-                    <a class="list-group-item list-group-item-action" asp-controller="Patient" asp-action="MyAppointments">
-                        <i class="bi bi-calendar-check me-2 text-primary"></i> My Appointments
-                    </a>
-
-                    
-                </div>
-
-            </div>
-
-            <!-- CONTENT AREA -->
-            <div class="col-md-9">
-
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        @RenderBody()
-                    </div>
-                </div>
-
-            </div>
-
+        <div class="admin-card">
+            @RenderBody()
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -12,6 +12,10 @@
 }
 
 <h2>Manage Physicians</h2>
+<a asp-controller="Home" asp-action="AdminDashboard"
+       class="btn btn-outline-primary mb-3">
+    ← Back to Home
+</a>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -33,8 +37,8 @@
                 <td>@doctor.Phone</td>
                 <td>
                     <a asp-action="EditPhysician" asp-route-id="@doctor.PhysicianId" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="DeletePhysician" asp-route-id="@doctor.PhysicianId" class="btn btn-sm btn-danger"
-                       onclick="return confirm('Are you sure you want to delete this physician?');">Delete</a>
+                   @*  <a asp-action="DeletePhysician" asp-route-id="@doctor.PhysicianId" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this physician?');">Delete</a> *@
                 </td>
             </tr>
         }

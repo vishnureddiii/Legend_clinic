@@ -1,25 +1,35 @@
 ﻿@model Legend_clinic.Models.Appointment
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Book Appointment";
+}
 
 <h2>Book Appointment</h2>
+
+<!-- BACK BUTTON FIXED -->
+<a asp-controller="Home" asp-action="PatientDashboard" class="btn btn-secondary mb-3">
+    ⬅ Back
+</a>
 
 <form asp-action="BookAppointment" method="post">
 
     <!-- DOCTOR -->
     <div class="mb-3">
         <label>Doctor</label>
-        <select asp-for="PhysicianId" class="form-control" required>
-            <option value="">-- Select Doctor --</option>
-            @foreach (var doc in ViewBag.Doctors)
-            {
-                <option value="@doc.PhysicianId">@doc.Name</option>
-            }
-        </select>
+        <div class="mb-3">
+            <label>Doctor</label>
+            <input class="form-control" value="Assigned by Admin" disabled />
+        </div>
     </div>
 
     <!-- DATE -->
     <div class="mb-3">
         <label>Date & Time</label>
-        <input asp-for="AppointmentDateTime" type="datetime-local" class="form-control" required />
+        <input asp-for="AppointmentDateTime"
+               type="datetime-local"
+               class="form-control"
+               id="apptDate"
+               required />
     </div>
 
     <!-- CRITICALITY -->
@@ -27,9 +37,9 @@
         <label>Criticality</label>
         <select asp-for="Criticality" class="form-control" required>
             <option value="">-- Select --</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <option value="Low">Emergency</option>
+            <option value="Medium">Normal</option>
+            <option value="High">Medium</option>
         </select>
     </div>
 
@@ -45,5 +55,15 @@
         <input asp-for="Note" class="form-control" required />
     </div>
 
-    <button class="btn btn-success">Book</button>
+    <button type="submit" class="btn btn-success">Book</button>
+
 </form>
+
+<!-- ✅ BLOCK PAST + CURRENT DATE -->
+<script>
+    const now = new Date();
+    const minDateTime = new Date(now.getTime() + 60000) // +1 minute buffer
+
+    const formatted = minDateTime.toISOString().slice(0, 16);
+    document.getElementById("apptDate").min = formatted;
+</script>

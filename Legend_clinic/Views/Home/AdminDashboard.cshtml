@@ -3,5 +3,35 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Welcome, Admin @Context.Session.GetString("UserName")!</h2>
-<p>Manage users, appointments, and overall system operations from here.</p>
+<style>
+    .dashboard-title {
+        font-weight: 700;
+        color: #0b5ed7;
+    }
+
+    .welcome-box {
+        background: linear-gradient(135deg, #0b5ed7, #0dcaf0);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    
+    }
+</style>
+
+<!-- WELCOME BOX -->
+<div class="welcome-box mb-4">
+
+    <h2 class="mb-2">
+        👋 Welcome, Admin
+       
+    </h2>
+
+    <p class="mb-0">
+        Manage users, appointments, doctors, and clinic operations from here.
+    </p>
+
+</div>
+

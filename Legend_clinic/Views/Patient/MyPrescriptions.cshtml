@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "MyPrescriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<Legend_clinic.Models.PhysicianPrescription>
+
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "My Prescriptions";
+}
+
+<h2>My Prescriptions</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No prescriptions found.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-primary">
+            <tr>
+                <th>Drug</th>
+                <th>Prescription</th>
+                <th>Advice ID</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Drug?.Title</td>
+                    <td>@item.Prescription</td>
+                    <td>@item.PhysicianAdviceId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

@@ -2,7 +2,7 @@
 
 namespace Legend_clinic.Models
 {
-    public class RegisterViewModel
+    public class RegisterViewModel : IValidatableObject
     {
         [Required]
         public string UserName { get; set; } = null!;
@@ -16,7 +16,6 @@ namespace Legend_clinic.Models
         [Compare("Password")]
         public string ConfirmPassword { get; set; } = null!;
 
-        // 👇 Patient fields
         [Required]
         public string Name { get; set; } = null!;
 
@@ -34,5 +33,17 @@ namespace Legend_clinic.Models
 
         [Required]
         public string Email { get; set; } = null!;
+
+        // ✅ Custom validation here
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Dob >= DateOnly.FromDateTime(DateTime.Today))
+            {
+                yield return new ValidationResult(
+                    "Date of Birth must be in the past.",
+                    new[] { nameof(Dob) }
+                );
+            }
+        }
     }
 }

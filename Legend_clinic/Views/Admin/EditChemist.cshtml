@@ -1,16 +1,17 @@
 ﻿
-@{
-    ViewData["Title"] = "EditChemist";
-}
 
 <h1>EditChemist</h1>
 @model Legend_clinic.Models.Chemist
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Edit Chemist";
+  
 }
 
 <h2>Edit Chemist</h2>
+<a asp-controller="Admin" asp-action="ManageChemists"
+       class="btn btn-outline-primary mb-3">
+    ← Back 
+</a>
 
 <form asp-action="EditChemist" method="post">
     <input type="hidden" asp-for="ChemistId" />

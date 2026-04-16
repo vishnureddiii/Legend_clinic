@@ -1,20 +1,25 @@
-﻿
+﻿@model List<Legend_clinic.Models.Appointment>
+
 @{
-    ViewData["Title"] = "PendingAppointments";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Pending Appointments";
 }
 
-@model List<Legend_clinic.Models.Appointment>
+<a asp-controller="Home" asp-action="AdminDashboard"
+       class="btn btn-outline-primary mb-3">
+    ← Back to Home
+</a>
 
 <h2>Pending Appointments</h2>
 
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
         <tr>
             <th>Patient</th>
-            <th>Doctor</th>
             <th>Date</th>
             <th>Reason</th>
-            <th>Action</th>
+            <th>Criticality</th>
+            <th>Assign Doctor & Action</th>
         </tr>
     </thead>
 
@@ -22,20 +27,40 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Patient.Name</td>
-                <td>@item.Physician.Name</td>
+                <td>@item.Patient?.Name</td>
                 <td>@item.AppointmentDateTime</td>
                 <td>@item.Reason</td>
+                <td>@item.Criticality</td>
 
                 <td>
-                    <a asp-action="ApproveAppointment" asp-route-id="@item.AppointmentId"
-                       class="btn btn-success btn-sm">Approve</a>
+                    <!-- APPROVE FORM -->
+                    <form asp-action="ApproveAppointment" method="post" class="mb-2">
 
-                    <a asp-action="RejectAppointment" asp-route-id="@item.AppointmentId"
-                       class="btn btn-danger btn-sm">Reject</a>
+                        <input type="hidden" name="id" value="@item.AppointmentId" />
+
+                        <select name="physicianId" class="form-control mb-2" required>
+                            <option value="">-- Assign Doctor --</option>
+                            @foreach (var doc in ViewBag.Doctors)
+                            {
+                                <option value="@doc.PhysicianId">
+                                    @doc.Name
+                                </option>
+                            }
+                        </select>
+
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+                            Approve
+                        </button>
+                    </form>
+
+                    <!-- REJECT BUTTON -->
+                    <a asp-action="RejectAppointment"
+                           asp-route-id="@item.AppointmentId"
+                           class="btn btn-danger btn-sm w-100">
+                        Reject
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-

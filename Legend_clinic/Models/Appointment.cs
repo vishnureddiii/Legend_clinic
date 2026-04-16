@@ -14,10 +14,10 @@ public partial class Appointment
     public int AppointmentId { get; set; }
 
     [Column("PatientID")]
-    public int PatientId { get; set; }
+    public int  PatientId { get; set; }
 
     [Column("PhysicianID")]
-    public int PhysicianId { get; set; }
+    public int ? PhysicianId { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime AppointmentDateTime { get; set; }

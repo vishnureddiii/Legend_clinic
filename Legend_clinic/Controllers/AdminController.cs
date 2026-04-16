@@ -12,7 +12,7 @@ namespace Legend_clinic.Controllers
         {
             _context = context;
         }
-
+          
       
         private bool IsAdmin()
         {
@@ -308,11 +308,14 @@ namespace Legend_clinic.Controllers
 
             return RedirectToAction("ManageSuppliers");
         }
-       
+
         public async Task<IActionResult> PendingAppointments()
         {
             if (!IsAdmin())
                 return RedirectToAction("AccessDenied", "Home");
+
+            // ✅ Load doctors for dropdown
+            ViewBag.Doctors = _context.Physicians.ToList();
 
             var list = await _context.Appointments
                 .Include(a => a.Patient)
@@ -322,7 +325,8 @@ namespace Legend_clinic.Controllers
 
             return View(list);
         }
-        public async Task<IActionResult> ApproveAppointment(int id)
+        [HttpPost]
+        public async Task<IActionResult> ApproveAppointment(int id, int physicianId)
         {
             if (!IsAdmin())
                 return RedirectToAction("AccessDenied", "Home");
@@ -331,7 +335,9 @@ namespace Legend_clinic.Controllers
 
             if (appt != null)
             {
+                appt.PhysicianId = physicianId;   // ✅ assign doctor here
                 appt.ScheduleStatus = "Approved";
+
                 await _context.SaveChangesAsync();
             }
 

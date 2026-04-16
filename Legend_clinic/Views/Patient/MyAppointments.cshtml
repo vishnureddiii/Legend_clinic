@@ -1,28 +1,54 @@
-﻿
-@{
-    ViewData["Title"] = "MyAppointments";
-}
+﻿@model List<Legend_clinic.Models.Appointment>
 
-@model List<Legend_clinic.Models.Appointment>
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "My Appointments";
+}
 
 <h2>My Appointments</h2>
 
-<table class="table">
-    <thead>
+<a asp-controller="Home" asp-action="PatientDashboard" class="btn btn-secondary mb-3">
+    ⬅ Back
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
         <tr>
             <th>Doctor</th>
-            <th>Date</th>
+            <th>Date & Time</th>
             <th>Reason</th>
             <th>Status</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Physician.Name</td>
-                <td>@item.AppointmentDateTime</td>
-                <td>@item.Reason</td>
+
+                <!-- DOCTOR (SAFE NULL CHECK) -->
+                <td>
+                    @if (item.Physician != null)
+                    {
+                        <span>@item.Physician.Name</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not Assigned</span>
+                    }
+                </td>
+
+                <!-- DATE -->
+                <td>
+                    @item.AppointmentDateTime.ToString("dd-MM-yyyy hh:mm tt")
+                </td>
+
+                <!-- REASON -->
+                <td>
+                    @item.Reason
+                </td>
+
+                <!-- STATUS -->
                 <td>
                     <span class="badge
                         @(item.ScheduleStatus == "Approved" ? "bg-success" :
@@ -31,8 +57,8 @@
                         @item.ScheduleStatus
                     </span>
                 </td>
+
             </tr>
         }
     </tbody>
 </table>
-

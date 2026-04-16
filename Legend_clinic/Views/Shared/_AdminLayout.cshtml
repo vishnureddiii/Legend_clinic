@@ -2,80 +2,163 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Admin</title>
+    <title>@ViewData["Title"] - Clinic Admin</title>
 
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+
+            body {
+                margin: 0;
+                background: #f4f7ff;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            /* ================= NAVBAR ================= */
+            .admin-navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                z-index: 1000;
+                background: linear-gradient(135deg, #0b5ed7, #0dcaf0);
+                color: white;
+                padding: 0 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+                .admin-navbar .brand {
+                    font-weight: bold;
+                    font-size: 18px;
+                }
+
+                .admin-navbar .user-box {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+            .btn-logout {
+                background: #dc3545;
+                border: none;
+                color: white;
+                padding: 5px 12px;
+                border-radius: 6px;
+            }
+
+                .btn-logout:hover {
+                    background: #bb2d3b;
+                }
+
+            /* ================= SIDEBAR ================= */
+            .sidebar {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 220px;
+                height: calc(100vh - 60px);
+                background: #0b5ed7;
+                padding: 15px;
+                overflow-y: auto;
+            }
+
+                .sidebar a {
+                    display: block;
+                    color: white;
+                    padding: 12px 15px;
+                    margin-bottom: 8px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    transition: 0.3s;
+                    font-weight: 500;
+                }
+
+                    .sidebar a:hover {
+                        background: rgba(255,255,255,0.2);
+                        transform: translateX(5px);
+                    }
+
+            /* ================= CONTENT ================= */
+            .content-area {
+                margin-left: 220px;
+                margin-top: 60px;
+                padding: 20px;
+            }
+
+            /* OPTIONAL CARD */
+            .admin-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+            /* ================= MOBILE FIX ================= */
+            @@media (max-width: 768px) {
+
+                .sidebar {
+                    width: 180px;
+                }
+
+                .content-area {
+                    margin-left: 180px;
+                }
+
+                .admin-navbar .brand {
+                    font-size: 16px;
+                }
+            }
+
+    </style>
 </head>
+
 <body>
 
-    
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <span class="navbar-brand">Clinic Admin</span>
-
-            <div>
-                <span class="text-white me-3">
-                    @Context.Session.GetString("UserName")
-                </span>
-
-                <a class="btn btn-danger btn-sm" asp-controller="Account" asp-action="Logout">
-                    Logout
-                </a>
-            </div>
+    <!-- NAVBAR -->
+    <div class="admin-navbar">
+        <div class="brand">
+            🏥 Clinic Admin Panel
         </div>
-    </nav>
 
-    
-    <div class="container mt-4">
-        <div class="row">
+        <div class="user-box">
+            <span>👤 @Context.Session.GetString("UserName")</span>
 
-            
-            <div class="col-md-3">
-                <div class="list-group">
-
-                    <a asp-controller="Home" asp-action="AdminDashboard" class="list-group-item">
-                        Dashboard
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="CreateUser" class="list-group-item">
-                        Create User
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="ManagePhysicians" class="list-group-item">
-                        Manage Physicians
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="ManageChemists" class="list-group-item">
-                        Manage Chemists
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="ManageSuppliers" class="list-group-item">
-                        Manage Suppliers
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="PendingAppointments" class="list-group-item">
-                        Manage Appointments
-                    </a>
-
-                    <a asp-controller="Admin" asp-action="PendingPatients" class="list-group-item">
-                        Pending Patients
-                    </a>
-
-                </div>
-            </div>
-            
-            <div class="col-md-9">
-                @RenderBody()
-            </div>
-
+            <a asp-controller="Account" asp-action="Logout" class="btn-logout">
+                Logout
+            </a>
         </div>
     </div>
 
-    
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <a asp-controller="Admin" asp-action="CreateUser">➕ Create User</a>
+
+        <a asp-controller="Admin" asp-action="ManagePhysicians">👨‍⚕️ Physicians</a>
+
+        <a asp-controller="Admin" asp-action="ManageChemists">💊 Chemists</a>
+
+        <a asp-controller="Admin" asp-action="ManageSuppliers">🚚 Suppliers</a>
+
+        <a asp-controller="Admin" asp-action="PendingAppointments">📅 Appointments</a>
+
+        <a asp-controller="Admin" asp-action="PendingPatients">🧑‍🤝‍🧑 Patients</a>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+        @RenderBody()
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    
     @RenderSection("Scripts", required: false)
 
 </body>

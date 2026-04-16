@@ -1,45 +1,45 @@
-﻿
+﻿@model List<Legend_clinic.Models.Drug>
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="container py-5">
 
-@model List<Legend_clinic.Models.Drug>
+    <h2 class="mb-4 text-primary fw-bold">Available Drugs</h2>
 
-<h2 class="mb-4 text-primary">Available Drugs</h2>
+    <div class="row">
 
-<div class="row">
+        @foreach (var drug in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100 border-0">
 
-    @foreach (var drug in Model)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+                    <div class="card-body">
 
-                <div class="card-body">
+                        <h5 class="card-title text-success fw-bold">
+                            @drug.Title
+                        </h5>
 
-                    <h5 class="card-title text-success">
-                        @drug.Title
-                    </h5>
+                        <p class="card-text text-muted">
+                            @drug.Description
+                        </p>
 
-                    <p class="card-text">
-                        @drug.Description
-                    </p>
+                        <p>
+                            <strong>Dosage:</strong> @drug.Dosage
+                        </p>
 
-                    <p>
-                        <strong>Dosage:</strong> @drug.Dosage
-                    </p>
+                        <p>
+                            <strong>Expiry:</strong> @drug.Expiry.ToString("dd-MM-yyyy")
+                        </p>
 
-                    <p>
-                        <strong>Expiry:</strong> @drug.Expiry.ToString("dd-MM-yyyy")
-                    </p>
+                    </div>
 
                 </div>
-
             </div>
-        </div>
-    }
+        }
+
+    </div>
 
 </div>
-
