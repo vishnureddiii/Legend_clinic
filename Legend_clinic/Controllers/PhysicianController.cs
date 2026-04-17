@@ -8,6 +8,7 @@ namespace Legend_clinic.Controllers
     {
         private readonly AppDbContext _context;
 
+        // ✅ FIXED CONSTRUCTOR
         public PhysicianController(AppDbContext context)
         {
             _context = context;
@@ -25,7 +26,9 @@ namespace Legend_clinic.Controllers
             return HttpContext.Session.GetInt32("ReferenceId");
         }
 
-        // ================= APPOINTMENTS =================
+        // ============================================================
+        // ================= VIEW APPOINTMENTS ========================
+        // ============================================================
         public async Task<IActionResult> ViewAppointments()
         {
             if (!IsDoctorLoggedIn())
@@ -40,18 +43,41 @@ namespace Legend_clinic.Controllers
                 .Where(a => a.PhysicianId == doctorId)
                 .ToListAsync();
 
+            // ✅ NULL SAFE
+            appointments = appointments ?? new List<Appointment>();
+
+            // ✅ TODAY RANGE FIX (IMPORTANT)
+            var start = DateTime.Today;
+            var end = start.AddDays(1);
+
+            // ================= TODAY =================
+            ViewBag.TodayAppointments = appointments
+                .Where(a => a.AppointmentDateTime >= start &&
+                            a.AppointmentDateTime < end)
+                .ToList();
+
+            // ================= UPCOMING =================
+            ViewBag.UpcomingAppointments = appointments
+                .Where(a => a.AppointmentDateTime >= end)
+                .ToList();
+
+            // ================= COMPLETED =================
+            ViewBag.CompletedAppointments = appointments
+                .Where(a => a.Schedules != null &&
+                            a.Schedules.Any(s => s.ScheduleStatus == "Completed"))
+                .ToList();
+
             return View(appointments);
         }
 
-        // ================= GIVE ADVICE =================
+        // ============================================================
+        // ================= GIVE ADVICE ==============================
+        // ============================================================
         [HttpGet]
         public IActionResult GiveAdvice(int appointmentId)
         {
             if (!IsDoctorLoggedIn())
                 return RedirectToAction("Login", "Account");
-
-            if (appointmentId <= 0)
-                return RedirectToAction("ViewAppointments");
 
             ViewBag.AppointmentId = appointmentId;
             ViewBag.Drugs = _context.Drugs.ToList();
@@ -88,7 +114,7 @@ namespace Legend_clinic.Controllers
                 return View();
             }
 
-            // ❗ CHECK duplicate
+            // ❗ Prevent duplicate
             var existingAdvice = await _context.PhysicianAdvices
                 .Include(a => a.Schedule)
                 .FirstOrDefaultAsync(a => a.Schedule.AppointmentId == appointmentId);
@@ -147,11 +173,12 @@ namespace Legend_clinic.Controllers
             }
 
             TempData["Success"] = "Advice and prescription sent successfully.";
-
             return RedirectToAction("ViewAppointments");
         }
 
-        // ================= VIEW PRESCRIPTION =================
+        // ============================================================
+        // ================= VIEW PRESCRIPTION ========================
+        // ============================================================
         public async Task<IActionResult> ViewPrescription(int appointmentId)
         {
             if (!IsDoctorLoggedIn())
@@ -170,11 +197,12 @@ namespace Legend_clinic.Controllers
                 return RedirectToAction("ViewAppointments");
             }
 
-            // ✅ IMPORTANT FIX → explicitly load correct view
             return View("ViewPrescription", data);
         }
 
-        // ================= DRUG REQUEST =================
+        // ============================================================
+        // ================= DRUG REQUEST =============================
+        // ============================================================
         [HttpGet]
         public IActionResult DrugRequest()
         {
@@ -199,9 +227,6 @@ namespace Legend_clinic.Controllers
 
             var doctorId = GetDoctorId();
 
-            if (doctorId == null)
-                return RedirectToAction("Login", "Account");
-
             _context.DrugRequests.Add(new DrugRequest
             {
                 PhysicianId = doctorId.Value,
@@ -213,7 +238,6 @@ namespace Legend_clinic.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Drug request sent successfully.";
-
             return RedirectToAction("DrugRequest");
         }
     }

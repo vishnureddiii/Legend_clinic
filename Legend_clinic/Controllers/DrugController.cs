@@ -13,11 +13,34 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-     
-        public async Task<IActionResult> Index()
+        // GET: /Drug/Index?search=xxx
+        public async Task<IActionResult> Index(string search)
         {
-            var drugs = await _context.Drugs.ToListAsync();
+            var query = _context.Drugs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(d =>
+                    d.Title.ToLower().Contains(search.ToLower())
+                );
+            }
+
+            var drugs = await query.ToListAsync();
             return View(drugs);
+        }
+
+        // GET: /Drug/Details/1
+        public async Task<IActionResult> Details(int id)
+        {
+            var drug = await _context.Drugs
+                .FirstOrDefaultAsync(x => x.DrugId == id);
+
+            if (drug == null)
+            {
+                return NotFound();
+            }
+
+            return View(drug);
         }
     }
 }

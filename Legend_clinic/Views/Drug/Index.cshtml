@@ -1,45 +1,114 @@
-﻿@model List<Legend_clinic.Models.Drug>
+﻿@model IEnumerable<Legend_clinic.Models.Drug>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Drug Info";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container py-5">
+<style>
+    .page-title {
+        font-weight: 700;
+        color: #0b5ed7;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-    <h2 class="mb-4 text-primary fw-bold">Available Drugs</h2>
+    .search-box {
+        max-width: 500px;
+        margin: auto;
+    }
 
-    <div class="row">
+    .drug-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        transition: 0.3s;
+        height: 100%;
+    }
 
-        @foreach (var drug in Model)
+        .drug-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .drug-title {
+        font-weight: 600;
+        color: #0b5ed7;
+    }
+
+    .badge-dosage {
+        background: #e7f1ff;
+        color: #0b5ed7;
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+
+    .drug-text {
+        font-size: 14px;
+        color: #555;
+        margin-top: 10px;
+    }
+
+    .expiry {
+        font-size: 13px;
+        color: #dc3545;
+        margin-top: 5px;
+    }
+
+    .btn-view {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- TITLE -->
+    <h2 class="page-title">💊 Drug Information</h2>
+
+    <!-- SEARCH -->
+    <form class="search-box d-flex gap-2 mb-4" method="get" asp-action="Index">
+        <input type="text" name="search" class="form-control" placeholder="Search drug title..." />
+        <button class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- DRUG GRID -->
+    <div class="row g-4">
+
+        @foreach (var item in Model)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100 border-0">
+            <div class="col-md-4 d-flex">
 
-                    <div class="card-body">
+                <div class="card drug-card w-100 p-3">
 
-                        <h5 class="card-title text-success fw-bold">
-                            @drug.Title
-                        </h5>
+                    <!-- TITLE -->
+                    <h5 class="drug-title">@item.Title</h5>
 
-                        <p class="card-text text-muted">
-                            @drug.Description
-                        </p>
+                    <!-- DOSAGE -->
+                    <span class="badge-dosage">
+                        Dosage: @item.Dosage
+                    </span>
 
-                        <p>
-                            <strong>Dosage:</strong> @drug.Dosage
-                        </p>
+                    <!-- DESCRIPTION -->
+                    <p class="drug-text">
+                        @item.Description
+                    </p>
 
-                        <p>
-                            <strong>Expiry:</strong> @drug.Expiry.ToString("dd-MM-yyyy")
-                        </p>
+                    <!-- EXPIRY -->
+                    <p class="expiry">
+                        Expiry: @item.Expiry
+                    </p>
 
-                    </div>
+                    <!-- BUTTON -->
+                    <a asp-action="Details"
+                           asp-route-id="@item.DrugId"
+                           class="btn btn-outline-primary btn-sm btn-view w-100">
+                        View Details
+                    </a>
 
                 </div>
+
             </div>
         }
 
     </div>
-
 </div>

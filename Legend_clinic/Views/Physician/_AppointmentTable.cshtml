@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Legend_clinic.Models.Appointment>
+
+<table class="table table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Consultation</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No records found
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                var status = item.Schedules?.FirstOrDefault()?.ScheduleStatus ?? "Pending";
+
+                bool hasPrescription =
+                    item.Schedules != null &&
+                    item.Schedules.Any(s =>
+                        s.PhysicianAdvices != null &&
+                        s.PhysicianAdvices.Any());
+
+                <tr>
+                    <td>@item.Patient?.Name</td>
+
+                    <td>
+                        @item.AppointmentDateTime.ToString("dd-MM-yyyy hh:mm tt")
+                    </td>
+
+                    <td>@item.Reason</td>
+
+                    <td>
+                        @if (status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (hasPrescription)
+                        {
+                            <a asp-action="ViewPrescription"
+                                   asp-route-appointmentId="@item.AppointmentId"
+                                   class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="GiveAdvice"
+                                   asp-route-appointmentId="@item.AppointmentId"
+                                   class="btn btn-success btn-sm">
+                                <i class="bi bi-plus-circle"></i> Add
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

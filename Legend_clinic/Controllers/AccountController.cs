@@ -40,7 +40,6 @@ namespace Legend_clinic.Controllers
                 return View(model);
             }
 
-
             var patient = new Patient
             {
                 Name = model.Name ?? model.UserName,
@@ -55,24 +54,24 @@ namespace Legend_clinic.Controllers
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
-            // 2. Create User linked to Patient
             var user = new User
             {
                 UserName = model.UserName,
-                Password = model.Password, // (Later: hash this)
+                Password = model.Password,
                 Role = "Patient",
                 ReferenceId = patient.PatientId,
-                IsApproved = false // 🔥 Admin must approve
+                IsApproved = false
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            ViewBag.Success = "Registered successfully! Wait for admin approval.";
             return RedirectToAction("Login");
         }
 
-
+        // =========================
+        // LOGIN (GET)
+        // =========================
         public IActionResult Login()
         {
             return View();
@@ -88,7 +87,9 @@ namespace Legend_clinic.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u =>
+                        u.UserName == model.UserName &&
+                        u.Password == model.Password);
 
                 if (user == null)
                 {
@@ -96,18 +97,16 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                // 🔥 BLOCK UNAPPROVED USERS
                 if (!user.IsApproved)
                 {
                     ViewBag.Error = "Your account is waiting for admin approval.";
                     return View(model);
                 }
 
-                // SESSION
+                // ✅ FIXED SESSION (IMPORTANT)
                 HttpContext.Session.SetString("UserName", user.UserName);
                 HttpContext.Session.SetString("Role", user.Role);
-                HttpContext.Session.SetInt32("SupplierId", user.ReferenceId);
-
+                HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
 
                 return user.Role switch
                 {

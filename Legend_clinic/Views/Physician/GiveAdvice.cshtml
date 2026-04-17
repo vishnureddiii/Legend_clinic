@@ -3,7 +3,9 @@
     ViewData["Title"] = "Add Advice & Prescription";
 }
 
-<h2 class="text-primary mb-4">Doctor Advice & Prescription</h2>
+<h2 class="text-primary mb-4">
+    <i class="bi bi-clipboard-plus"></i> Doctor Advice & Prescription
+</h2>
 
 @if (ViewBag.Error != null)
 {
@@ -15,116 +17,153 @@
 <form asp-action="GiveAdvice" method="post">
     @Html.AntiForgeryToken()
 
-    <!-- Hidden Appointment Id -->
     <input type="hidden" name="appointmentId" value="@ViewBag.AppointmentId" />
 
-    <!-- Doctor Advice -->
-    <div class="mb-4">
-        <label class="form-label fw-bold">Doctor Advice</label>
-
-        <textarea name="advice"
-                  class="form-control"
-                  rows="5"
-                  required
-                  placeholder="Enter doctor advice"></textarea>
-    </div>
-
-    <!-- Medicines Section -->
-    <h5 class="text-success mb-3">Medicines</h5>
-
-    <div id="prescriptionContainer">
-
-        <!-- First Row -->
-        <div class="row prescriptionRow mb-3">
-
-            <!-- Medicine Dropdown -->
-            <div class="col-md-5">
-                <label class="form-label">Medicine</label>
-
-                <select name="drugIds" class="form-select" required>
-                    <option value="">-- Select Medicine --</option>
-
-                    @if (ViewBag.Drugs != null && ViewBag.Drugs.Count > 0)
-                    {
-                        foreach (var drug in ViewBag.Drugs)
-                        {
-                            <option value="@drug.DrugId">
-                                @drug.Title (@drug.Dosage)
-                            </option>
-                        }
-                    }
-                    else
-                    {
-                        <option disabled>No medicines available</option>
-                    }
-                </select>
-            </div>
-
-            <!-- Prescription Input -->
-            <div class="col-md-5">
-                <label class="form-label">Prescription</label>
-
-                <input type="text"
-                       name="prescriptions"
-                       class="form-control"
-                       placeholder="Ex: 1 tablet twice daily"
-                       required />
-            </div>
-
-            <!-- Remove Button -->
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="button"
-                        class="btn btn-danger w-100"
-                        onclick="removeRow(this)">
-                    Remove
-                </button>
-            </div>
-
+    <!-- ================= DOCTOR ADVICE ================= -->
+    <div class="card mb-4 shadow-sm border-success">
+        <div class="card-header bg-light">
+            <h5 class="text-success mb-0">
+                <i class="bi bi-chat-left-text"></i> Doctor Advice
+            </h5>
         </div>
 
+        <div class="card-body">
+            <textarea name="advice"
+                      class="form-control"
+                      rows="4"
+                      required
+                      placeholder="Enter doctor advice and recommendations..."></textarea>
+        </div>
     </div>
 
-    <!-- Add More Button -->
-    <button type="button"
-            class="btn btn-outline-primary mb-3"
-            onclick="addPrescriptionRow()">
-        + Add More Medicine
-    </button>
+    <!-- ================= MEDICINES ================= -->
+    <div class="card mb-4 shadow-sm border-primary">
+        <div class="card-header bg-light">
+            <h5 class="text-primary mb-0">
+                <i class="bi bi-capsule"></i> Medicines
+            </h5>
+        </div>
 
-    <br />
+        <div class="card-body">
 
-    <!-- Submit -->
-    <button type="submit" class="btn btn-success px-4">
-        Send Prescription
-    </button>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:60px;">#</th>
+                            <th>Medicine</th>
+                            <th>Prescription</th>
+                            <th style="width:120px;">Action</th>
+                        </tr>
+                    </thead>
 
-    <!-- Back -->
-    <a asp-action="ViewAppointments" class="btn btn-secondary px-4">
-        Back
-    </a>
+                    <tbody id="prescriptionContainer">
+
+                        <!-- FIRST ROW -->
+                        <tr class="prescriptionRow">
+
+                            <td class="text-center fw-bold rowIndex">1</td>
+
+                            <!-- Medicine -->
+                            <td>
+                                <select name="drugIds" class="form-select" required>
+                                    <option value="">-- Select Medicine --</option>
+
+                                    @if (ViewBag.Drugs != null && ViewBag.Drugs.Count > 0)
+                                    {
+                                        foreach (var drug in ViewBag.Drugs)
+                                        {
+                                            <option value="@drug.DrugId">
+                                                @drug.Title (@drug.Dosage)
+                                            </option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option disabled>No medicines available</option>
+                                    }
+                                </select>
+                            </td>
+
+                            <!-- Prescription -->
+                            <td>
+                                <input type="text"
+                                       name="prescriptions"
+                                       class="form-control"
+                                       placeholder="Ex: 1 tablet twice daily"
+                                       required />
+                            </td>
+
+                            <!-- Remove -->
+                            <td>
+                                <button type="button"
+                                        class="btn btn-outline-danger w-100"
+                                        onclick="removeRow(this)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ADD BUTTON -->
+            <button type="button"
+                    class="btn btn-outline-primary mt-2"
+                    onclick="addPrescriptionRow()">
+                <i class="bi bi-plus"></i> Add Another Medicine
+            </button>
+
+        </div>
+    </div>
+
+    <!-- ================= ACTION BUTTONS ================= -->
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success px-4">
+            <i class="bi bi-send"></i> Send Prescription
+        </button>
+
+        <a asp-action="ViewAppointments" class="btn btn-secondary px-4">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
 
 </form>
 
 @section Scripts {
-    <script>
-        function addPrescriptionRow() {
-            let container = document.getElementById("prescriptionContainer");
-            let row = document.querySelector(".prescriptionRow");
-            let clone = row.cloneNode(true);
+<script>
+    function addPrescriptionRow() {
+        let container = document.getElementById("prescriptionContainer");
+        let firstRow = document.querySelector(".prescriptionRow");
 
-            // Clear inputs
-            clone.querySelectorAll("input").forEach(input => input.value = "");
-            clone.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+        let clone = firstRow.cloneNode(true);
 
-            container.appendChild(clone);
+        // clear inputs
+        clone.querySelectorAll("input").forEach(i => i.value = "");
+        clone.querySelectorAll("select").forEach(s => s.selectedIndex = 0);
+
+        container.appendChild(clone);
+
+        updateRowNumbers();
+    }
+
+    function removeRow(btn) {
+        let rows = document.querySelectorAll(".prescriptionRow");
+
+        if (rows.length > 1) {
+            btn.closest("tr").remove();
+            updateRowNumbers();
         }
+    }
 
-        function removeRow(button) {
-            let rows = document.querySelectorAll(".prescriptionRow");
+    function updateRowNumbers() {
+        let rows = document.querySelectorAll(".prescriptionRow");
 
-            if (rows.length > 1) {
-                button.closest(".prescriptionRow").remove();
-            }
-        }
-    </script>
+        rows.forEach((row, index) => {
+            row.querySelector(".rowIndex").innerText = index + 1;
+        });
+    }
+</script>
 }
