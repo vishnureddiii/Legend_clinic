@@ -5,25 +5,85 @@
     Layout = "~/Views/Shared/_SupplierLayout.cshtml";
 }
 
-<h2>Purchase Orders</h2>
+<h2 class="mb-3 text-primary">📦 Purchase Orders</h2>
 
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered table-hover">
+
+    <thead class="table-dark">
         <tr>
             <th>Order ID</th>
+            <th>Order Name</th>   <!-- ✅ ADDED -->
             <th>Date</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
 
     <tbody>
+
         @foreach (var item in Model)
         {
             <tr>
+
                 <td>@item.Poid</td>
+
+                <!-- ✅ ORDER NAME -->
+                <td>
+                    @if (!string.IsNullOrEmpty(item.OrderName))
+                    {
+                        @item.OrderName
+                    }
+                    else
+                    {
+                        <span class="text-muted">N/A</span>
+                    }
+                </td>
+
                 <td>@item.Podate</td>
-                <td>@item.Status</td>
+
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (item.Status == "Accepted")
+                    {
+                        <span class="badge bg-success">Accepted</span>
+                    }
+                    else if (item.Status == "Rejected")
+                    {
+                        <span class="badge bg-danger">Rejected</span>
+                    }
+                </td>
+
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <!-- ACCEPT -->
+                        <form asp-action="Accept" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Poid" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Accept
+                            </button>
+                        </form>
+
+                        <!-- REJECT -->
+                        <form asp-action="Reject" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Poid" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Reject
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No actions</span>
+                    }
+                </td>
+
             </tr>
         }
+
     </tbody>
+
 </table>

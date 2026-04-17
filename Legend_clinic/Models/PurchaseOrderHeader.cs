@@ -26,12 +26,18 @@ public partial class PurchaseOrderHeader
     [Unicode(false)]
     public string Status { get; set; } = null!;
 
+    // ✅ NEW FIELD ADDED
+    [StringLength(100)]
+    [Unicode(false)]
+    public string? OrderName { get; set; }
+
     [ForeignKey("ChemistId")]
     [InverseProperty("PurchaseOrderHeaders")]
     public virtual Chemist Chemist { get; set; } = null!;
 
     [InverseProperty("Po")]
-    public virtual ICollection<PurchaseOrderDetail> PurchaseOrderDetails { get; set; } = new List<PurchaseOrderDetail>();
+    public virtual ICollection<PurchaseOrderDetail> PurchaseOrderDetails { get; set; }
+        = new List<PurchaseOrderDetail>();
 
     [ForeignKey("SupplierId")]
     [InverseProperty("PurchaseOrderHeaders")]

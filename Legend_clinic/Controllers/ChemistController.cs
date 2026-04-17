@@ -54,7 +54,6 @@ namespace Legend_clinic.Controllers
         {
             await LoadDashboardCounts();
 
-            // ✅ FIX: Expiry validation (DateOnly safe)
             if (drug.Expiry < new DateOnly(2026, 1, 1))
             {
                 ModelState.AddModelError("Expiry", "Expiry date cannot be before 2026.");
@@ -70,7 +69,7 @@ namespace Legend_clinic.Controllers
             return RedirectToAction(nameof(ManageDrugs));
         }
 
-        // ================= CREATE PURCHASE ORDER =================
+        // ================= CREATE PURCHASE ORDER (GET) =================
         public async Task<IActionResult> CreatePurchaseOrder()
         {
             await LoadDashboardCounts();
@@ -97,6 +96,7 @@ namespace Legend_clinic.Controllers
             return View(model);
         }
 
+        // ================= CREATE PURCHASE ORDER (POST) =================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePurchaseOrder(CreatePOViewModel model)
@@ -130,7 +130,6 @@ namespace Legend_clinic.Controllers
                 if (item.DrugId <= 0)
                     ModelState.AddModelError("", "Please select drug.");
 
-                // ✅ FIX: Quantity validation (NO negative / zero)
                 if (item.Quantity <= 0)
                     ModelState.AddModelError("", "Quantity must be greater than 0.");
             }
@@ -148,13 +147,29 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
+                // ================= FIX: GET DRUG NAMES PROPERLY =================
+                var selectedDrugIds = model.Items
+                    .Where(i => i.DrugId > 0)
+                    .Select(i => i.DrugId)
+                    .ToList();
+
+                var drugNames = await _context.Drugs
+                    .Where(d => selectedDrugIds.Contains(d.DrugId))
+                    .Select(d => d.Title)
+                    .ToListAsync();
+
                 // ================= HEADER =================
                 var header = new PurchaseOrderHeader
                 {
                     ChemistId = chemist.ChemistId,
                     SupplierId = model.SupplierId,
                     Podate = DateTime.Now,
-                    Status = "Pending"
+                    Status = "Pending",
+
+                    // ✅ FINAL ORDER NAME LOGIC
+                    OrderName = drugNames.Any()
+                        ? string.Join(", ", drugNames)
+                        : "Drug Order"
                 };
 
                 _context.PurchaseOrderHeaders.Add(header);
