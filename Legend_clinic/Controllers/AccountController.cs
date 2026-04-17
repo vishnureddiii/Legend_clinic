@@ -13,17 +13,11 @@ namespace Legend_clinic.Controllers
             _context = context;
         }
 
-        // =========================
-        // REGISTER (GET)
-        // =========================
         public IActionResult Register()
         {
             return View();
         }
 
-        // =========================
-        // REGISTER (POST)
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -72,17 +66,13 @@ namespace Legend_clinic.Controllers
             return View();
         }
 
-        // =========================
-        // LOGIN (GET)
-        // =========================
+       
         public IActionResult Login()
         {
             return View();
         }
 
-        // =========================
-        // LOGIN (POST)
-        // =========================
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -106,7 +96,7 @@ namespace Legend_clinic.Controllers
                     return View(model);
                 }
 
-                // ✅ FIXED SESSION (IMPORTANT)
+                
                 HttpContext.Session.SetString("UserName", user.UserName);
                 HttpContext.Session.SetString("Role", user.Role);
                 HttpContext.Session.SetInt32("ReferenceId", user.ReferenceId);
@@ -125,9 +115,7 @@ namespace Legend_clinic.Controllers
             return View(model);
         }
 
-        // =========================
-        // LOGOUT
-        // =========================
+       
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
