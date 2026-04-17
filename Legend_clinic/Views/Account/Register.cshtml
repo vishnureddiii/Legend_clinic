@@ -33,13 +33,6 @@
         padding: 25px;
     }
 
-    .section-title {
-        color: #0b5ed7;
-        font-weight: 600;
-        margin-top: 15px;
-        margin-bottom: 10px;
-    }
-
     .form-control,
     .form-select {
         border-radius: 10px;
@@ -91,22 +84,39 @@
         <div class="register-body">
 
             <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
 
-                <!-- ACCOUNT DETAILS -->
-              
+                <!-- SUCCESS MESSAGE -->
+                @if (ViewBag.Success != null)
+                {
+                    <div class="alert alert-success">
+                        @ViewBag.Success
+                    </div>
+                }
 
+                <!-- ERROR MESSAGE -->
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                <!-- USERNAME -->
                 <div class="mb-3">
                     <label asp-for="UserName" class="form-label"></label>
-                    <input asp-for="UserName" class="form-control" placeholder="Enter username" />
+                    <input asp-for="UserName" class="form-control" placeholder="Enter username (letters & numbers only)" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
+                <!-- PASSWORD -->
                 <div class="mb-3">
                     <label asp-for="Password" class="form-label"></label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
+                <!-- CONFIRM PASSWORD -->
                 <div class="mb-3">
                     <label asp-for="ConfirmPassword" class="form-label"></label>
                     <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
@@ -115,15 +125,14 @@
 
                 <hr />
 
-                <!-- PATIENT DETAILS -->
-               
-
+                <!-- NAME -->
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label"></label>
                     <input asp-for="Name" class="form-control" placeholder="Full name" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
+                <!-- DOB -->
                 <div class="mb-3">
                     <label asp-for="Dob" class="form-label"></label>
                     <input asp-for="Dob"
@@ -133,6 +142,7 @@
                     <span asp-validation-for="Dob" class="text-danger"></span>
                 </div>
 
+                <!-- GENDER -->
                 <div class="mb-3">
                     <label asp-for="Gender" class="form-label"></label>
                     <select asp-for="Gender" class="form-select">
@@ -143,36 +153,33 @@
                     <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
 
+                <!-- ADDRESS -->
                 <div class="mb-3">
                     <label asp-for="Address" class="form-label"></label>
                     <input asp-for="Address" class="form-control" placeholder="Address" />
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
 
+                <!-- PHONE -->
                 <div class="mb-3">
                     <label asp-for="Phone" class="form-label"></label>
-                    <input asp-for="Phone" class="form-control" placeholder="Phone number" />
+                    <input asp-for="Phone" class="form-control" placeholder="Enter 10-digit phone number" />
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
 
+                <!-- EMAIL -->
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label"></label>
                     <input asp-for="Email" class="form-control" placeholder="Email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                @if (ViewBag.Error != null)
-                {
-                    <div class="alert alert-danger">
-                        @ViewBag.Error
-                    </div>
-                }
-
-                <!-- BUTTONS -->
+                <!-- REGISTER BUTTON -->
                 <button type="submit" class="btn btn-register w-100 mb-2">
                     Register
                 </button>
 
+                <!-- BACK BUTTON -->
                 <a asp-controller="Home" asp-action="Index" class="btn btn-back w-100">
                     ⬅ Back to Home
                 </a>

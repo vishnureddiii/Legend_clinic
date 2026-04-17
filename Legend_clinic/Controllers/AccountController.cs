@@ -66,7 +66,10 @@ namespace Legend_clinic.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Login");
+            ViewBag.Success = "Registration successful wait for Admin Approval!";
+            ModelState.Clear();
+
+            return View();
         }
 
         // =========================
